@@ -6,23 +6,19 @@
  *   assets/generated/stats.svg      … GitHub Stats
  *   assets/generated/languages.svg  … Top Languages
  *   assets/generated/activity.svg   … Activity Graph（直近 30 日）
- *   assets/generated/snake.svg      … Contribution Snake（Platane/snk の出力をカードで包む）
  *
  * 環境変数
  *   GITHUB_TOKEN   必須。Actions では secrets.GITHUB_TOKEN をそのまま渡せます
  *   GH_USER        必須。Actions では github.repository_owner を渡します
- *   SNAKE_INPUT    任意。Platane/snk が出力した SVG のパス
  *   EXCLUDE_REPOS  任意。言語集計から除外するリポジトリ名（カンマ区切り）
  *   EXCLUDE_LANGS  任意。言語集計から除外する言語名（カンマ区切り）
  */
-import { readFile, writeFile, mkdir } from "node:fs/promises";
-import { existsSync } from "node:fs";
+import { writeFile, mkdir } from "node:fs/promises";
 import path from "node:path";
 
 const OUT_DIR = process.env.OUT_DIR || "assets/generated";
 const USER = process.env.GH_USER;
 const TOKEN = process.env.GITHUB_TOKEN;
-const SNAKE_INPUT = process.env.SNAKE_INPUT || "";
 const list = (v) => (v || "").split(",").map((s) => s.trim().toLowerCase()).filter(Boolean);
 const EXCLUDE_REPOS = list(process.env.EXCLUDE_REPOS);
 const EXCLUDE_LANGS = list(process.env.EXCLUDE_LANGS);
@@ -353,28 +349,6 @@ ${xl}
   });
 }
 
-/* ------------------------------------------------------------------ snake */
-function snakeCard(raw) {
-  const W = 804;
-  const IX = 20, IY = 50, IW = W - 40;
-  let inner, IH;
-  if (raw) {
-    const svg = raw.slice(raw.indexOf("<svg"));
-    const vb = (svg.match(/viewBox="([^"]+)"/) || [])[1];
-    const [, , vw, vh] = (vb || "0 0 880 192").split(/[\s,]+/).map(Number);
-    IH = r1((IW * vh) / vw);
-    inner = svg.replace(/<svg\b([^>]*)>/, (_, attrs) => {
-      const a = attrs.replace(/\s(?:width|height|x|y)="[^"]*"/g, "");
-      return `<svg${a} x="${IX}" y="${IY}" width="${IW}" height="${IH}">`;
-    });
-  } else {
-    IH = 168;
-    inner = `<text class="k-mono" x="${W / 2}" y="${IY + IH / 2}" text-anchor="middle" font-size="11" fill="${C.faint}" letter-spacing="1">THE SNAKE APPEARS AFTER THE FIRST WORKFLOW RUN</text>`;
-  }
-  const H = Math.round(IY + IH + 18);
-  return card({ w: W, h: H, title: "CONTRIBUTION SNAKE", meta: "LAST 12 MONTHS", label: "Contribution Snake", body: inner });
-}
-
 /* ------------------------------------------------------------------ main */
 const data = await fetchData();
 await mkdir(OUT_DIR, { recursive: true });
@@ -383,11 +357,5 @@ const out = (f) => path.join(OUT_DIR, f);
 await writeFile(out("stats.svg"), statsCard(data));
 await writeFile(out("languages.svg"), languagesCard(data));
 await writeFile(out("activity.svg"), activityCard(data));
-
-if (SNAKE_INPUT && existsSync(SNAKE_INPUT)) {
-  await writeFile(out("snake.svg"), snakeCard(await readFile(SNAKE_INPUT, "utf8")));
-} else if (!existsSync(out("snake.svg"))) {
-  await writeFile(out("snake.svg"), snakeCard(null));
-}
 
 console.log(`Generated cards for @${data.login} → ${OUT_DIR}`);
