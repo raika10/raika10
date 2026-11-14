@@ -226,8 +226,7 @@ function card({ w, h, title, meta, label, body, defs = "", css = "" }) {
 </g>
 <rect x=".5" y=".5" width="${w - 1}" height="${h - 1}" rx="13.5" fill="none" stroke="${C.muted}" stroke-opacity=".16"/>
 <g class="k-mono k-slide" font-size="11" letter-spacing="1.6">
-  <rect x="24" y="24.5" width="6" height="6" rx="1.5" fill="${C.emerald}"/>
-  <text x="38" y="31" fill="${C.mint}">${esc(title)}</text>
+  <text x="24" y="31" fill="${C.mint}">${esc(title)}</text>
   ${meta ? `<text x="${w - 24}" y="31" fill="${C.faint}" text-anchor="end" letter-spacing="1">${esc(meta)}</text>` : ""}
 </g>
 ${body}

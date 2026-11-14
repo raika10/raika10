@@ -37,8 +37,7 @@
 </g>
 <rect x=".5" y=".5" width="399" height="199" rx="13.5" fill="none" stroke="#94A3B8" stroke-opacity=".16"/>
 <g class="k-mono k-slide" font-size="11" letter-spacing="1.6">
-  <rect x="24" y="24.5" width="6" height="6" rx="1.5" fill="#10B981"/>
-  <text x="38" y="31" fill="#6EE7B7">TOP LANGUAGES</text>
+  <text x="24" y="31" fill="#6EE7B7">TOP LANGUAGES</text>
   <text x="376" y="31" fill="#64748B" text-anchor="end" letter-spacing="1">PUBLIC REPOS</text>
 </g>
 <clipPath id="k-bar"><rect x="24" y="56" width="352" height="8" rx="4"/></clipPath>
