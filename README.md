@@ -35,7 +35,3 @@
   <a href="mailto:YOUR_EMAIL"><img src="https://img.shields.io/badge/Email-0B1220?style=for-the-badge&logo=maildotru&logoColor=6EE7B7" alt="Email" /></a>
 </p>
 ===================================================================== -->
-
-<p align="center">
-  <img src="./assets/footer.svg" width="804" alt="" />
-</p>

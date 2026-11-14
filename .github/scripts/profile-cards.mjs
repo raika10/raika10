@@ -187,18 +187,8 @@ function roller(str, { x, y, size, fill, cls, weight = 400, cw, delay = 0, dur =
     .join("\n");
 }
 
-// カードの枠線上をゆっくり周回する光（border beam）
-function beam(w, h, phase) {
-  const r = 13.5, a = 0.5, b = w - 0.5, c = h - 0.5;
-  const d = `M${a + r} ${a}H${b - r}A${r} ${r} 0 0 1 ${b} ${a + r}V${c - r}A${r} ${r} 0 0 1 ${b - r} ${c}H${a + r}A${r} ${r} 0 0 1 ${a} ${c - r}V${a + r}A${r} ${r} 0 0 1 ${a + r} ${a}Z`;
-  const seg = (len, width, op, off) =>
-    `<path d="${d}" pathLength="1" stroke="${C.mint}" stroke-width="${width}" stroke-opacity="${op}" stroke-dasharray="${len} ${r1((1 - len) * 1000) / 1000}" stroke-dashoffset="${off}">` +
-    `<animate attributeName="stroke-dashoffset" values="${off};${r1((off - 1) * 1000) / 1000}" dur="14s" begin="-${phase}s" repeatCount="indefinite"/></path>`;
-  return `<g class="k-beam" fill="none" stroke-linecap="round" filter="url(#k-beamGlow)">${seg(0.2, 1.2, 0.22, 0)}${seg(0.05, 1.5, 0.9, -0.15)}</g>`;
-}
-
 /* ------------------------------------------------------------------ card frame */
-function card({ w, h, title, meta, label, body, defs = "", css = "", phase = 0 }) {
+function card({ w, h, title, meta, label, body, defs = "", css = "" }) {
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" role="img" aria-label="${esc(label)}">
 <defs>
   <linearGradient id="k-hair" x1="0" y1="0" x2="1" y2="0">
@@ -211,9 +201,6 @@ function card({ w, h, title, meta, label, body, defs = "", css = "", phase = 0 }
     <stop offset="0" stop-color="${C.emerald}" stop-opacity=".11"/>
     <stop offset="1" stop-color="${C.emerald}" stop-opacity="0"/>
   </radialGradient>
-  <filter id="k-beamGlow" x="-5%" y="-5%" width="110%" height="110%">
-    <feGaussianBlur stdDeviation="1.6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-  </filter>
   <clipPath id="k-clip"><rect width="${w}" height="${h}" rx="14"/></clipPath>
   ${defs}
 </defs>
@@ -224,7 +211,6 @@ function card({ w, h, title, meta, label, body, defs = "", css = "", phase = 0 }
   .k-slide{animation:k-slide .9s cubic-bezier(.16,1,.3,1) both}
   .k-fade{animation:k-fade .8s ease both}
   .k-draw{stroke-dasharray:1;animation:k-draw 1.3s cubic-bezier(.16,1,.3,1) both}
-  .k-beam{animation:k-fade 1.6s 1.6s ease both}
   @keyframes k-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
   @keyframes k-slide{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:none}}
   @keyframes k-fade{from{opacity:0}to{opacity:1}}
@@ -238,7 +224,6 @@ function card({ w, h, title, meta, label, body, defs = "", css = "", phase = 0 }
   <rect x="${r1(w * 0.18)}" y="0" width="${r1(w * 0.64)}" height="1" fill="url(#k-hair)"/>
 </g>
 <rect x=".5" y=".5" width="${w - 1}" height="${h - 1}" rx="13.5" fill="none" stroke="${C.muted}" stroke-opacity=".16"/>
-${beam(w, h, phase)}
 <g class="k-mono k-slide" font-size="11" letter-spacing="1.6">
   <rect x="24" y="24.5" width="6" height="6" rx="1.5" fill="${C.emerald}"/>
   <text x="38" y="31" fill="${C.mint}">${esc(title)}</text>
@@ -278,7 +263,7 @@ function statsCard({ login, stats }) {
   <line class="k-draw" style="animation-delay:.25s" pathLength="1" x1="136" y1="64" x2="136" y2="184"/>
   <line class="k-draw" style="animation-delay:.35s" pathLength="1" x1="260" y1="64" x2="260" y2="184"/>
 </g>`;
-  return card({ w: W, h: H, title: "GITHUB STATS", meta: `@${login}`, label: "GitHub Stats", body: grid + cells, phase: 0 });
+  return card({ w: W, h: H, title: "GITHUB STATS", meta: `@${login}`, label: "GitHub Stats", body: grid + cells });
 }
 
 /* ------------------------------------------------------------------ languages */
@@ -331,7 +316,7 @@ ${roller(`${l.pct.toFixed(1)}%`, { x: cx + 164, y: cy, size: 11, fill: C.muted, 
 ${rows}`;
   }
   return card({
-    w: W, h: H, title: "TOP LANGUAGES", meta: "PUBLIC REPOS", label: "Top Languages", body, phase: 4.5,
+    w: W, h: H, title: "TOP LANGUAGES", meta: "PUBLIC REPOS", label: "Top Languages", body,
     defs: `<linearGradient id="k-sheen" x1="0" y1="0" x2="1" y2="0">
     <stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".55"/><stop offset="1" stop-color="#fff" stop-opacity="0"/>
   </linearGradient>`,
@@ -430,17 +415,6 @@ function activityCard({ days }) {
     })
     .join("");
 
-  // ピークのラベル（描画ヘッドが通過したタイミングで出現）
-  let peak = "";
-  if (vmax > 0) {
-    const pi = vals.indexOf(vmax);
-    const [px, py] = pts[pi];
-    const at = (RD + RT * tAt[pi]).toFixed(2);
-    peak = `<g class="k-in" style="animation-delay:${at}s">
-  <circle cx="${r1(px)}" cy="${r1(py)}" r="3" fill="${C.navy}" stroke="${C.mint}" stroke-width="1.4"/>
-  <text class="k-mono" x="${r1(px)}" y="${r1(py - 11)}" text-anchor="middle" font-size="10" fill="${C.mint}">${vmax}</text>
-</g>`;
-  }
   const [lx, ly] = pts[pts.length - 1];
   const RW = X1 - X0 + 12;
 
@@ -460,7 +434,6 @@ ${xl}
     <animate attributeName="stroke-dashoffset" values=".04;-1.14;-1.14" keyTimes="0;.55;1" dur="6s" begin="${(RD + RT + 1).toFixed(1)}s" repeatCount="indefinite" calcMode="spline" keySplines=".45 0 .55 1;0 0 1 1"/>
   </path>
 </g>
-${peak}
 <g opacity="0" filter="url(#k-glowF)">
   <circle r="7" fill="${C.mint}" fill-opacity=".25"/>
   <circle r="2.6" fill="${C.text}"/>
@@ -475,7 +448,7 @@ ${peak}
   <circle cx="${r1(lx)}" cy="${r1(ly)}" r="3.5" fill="${C.cyan}"/>
 </g>`;
   return card({
-    w: W, h: H, title: "CONTRIBUTION ACTIVITY", meta: `LAST 30 DAYS · ${sum} CONTRIBUTIONS`, label: "GitHub Activity Graph", body, phase: 9,
+    w: W, h: H, title: "CONTRIBUTION ACTIVITY", meta: `LAST 30 DAYS · ${sum} CONTRIBUTIONS`, label: "GitHub Activity Graph", body,
     defs: `<linearGradient id="k-lineG" gradientUnits="userSpaceOnUse" x1="${X0}" y1="0" x2="${X1}" y2="0">
     <stop offset="0" stop-color="${C.emerald}"/><stop offset=".6" stop-color="${C.cyan}"/><stop offset="1" stop-color="${C.mint}"/>
   </linearGradient>
