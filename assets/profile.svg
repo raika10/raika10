@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="460" viewBox="0 0 1200 460" role="img" aria-label="About and Toolkit">
+  <defs>
+    <filter id="grain" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" stitchTiles="stitch"/>
+      <feColorMatrix type="saturate" values="0"/>
+    </filter>
+    <clipPath id="card"><rect width="1200" height="460" rx="28"/></clipPath>
+  </defs>
+
+  <style>
+    .mono  { font-family: 'SF Mono', 'JetBrains Mono', Consolas, Menlo, monospace; }
+    .sans  { font-family: 'Helvetica Neue', 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', Arial, sans-serif; }
+    .serif { font-family: Georgia, 'Times New Roman', 'Yu Mincho', serif; }
+    .in { animation: rise 1.1s cubic-bezier(.16,.84,.3,1) both; }
+    .d1 { animation-delay: .12s; } .d2 { animation-delay: .24s; } .d3 { animation-delay: .36s; }
+    @keyframes rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+  </style>
+
+  <g clip-path="url(#card)">
+    <rect width="1200" height="460" fill="#0A1628"/>
+    <rect width="1200" height="460" filter="url(#grain)" opacity=".05"/>
+    <line x1="600" y1="64" x2="600" y2="396" stroke="#1C2B45"/>
+
+    <!-- 01 About -->
+    <g class="in">
+      <text class="mono" x="72" y="84" font-size="12" letter-spacing="3"><tspan fill="#4C8DFF">01</tspan><tspan fill="#7F93B2"> — ABOUT</tspan></text>
+      <text class="serif" x="70" y="150" font-size="42" fill="#E6EEF8" letter-spacing="-1">Less, but <tspan font-style="italic" fill="#A9C7FF">better.</tspan></text>
+      <text class="sans" x="72" y="196" font-size="16" fill="#B4C3DA" letter-spacing=".5">シンプルで、長く愛せるものが好きです。</text>
+      <text class="sans" x="72" y="224" font-size="16" fill="#B4C3DA" letter-spacing=".5">Web を中心に、つくることを楽しんでいます。</text>
+    </g>
+    <g class="in d1">
+      <g stroke="#1C2B45">
+        <line x1="72" y1="262" x2="528" y2="262"/>
+        <line x1="72" y1="306" x2="528" y2="306"/>
+        <line x1="72" y1="350" x2="528" y2="350"/>
+        <line x1="72" y1="394" x2="528" y2="394"/>
+      </g>
+      <g class="mono" font-size="11" letter-spacing="2.5" fill="#7F93B2">
+        <text x="72" y="290">NOW</text>
+        <text x="72" y="334">LEARNING</text>
+        <text x="72" y="378">LIKES</text>
+      </g>
+      <g class="sans" font-size="16" fill="#E6EEF8">
+        <text x="200" y="290">個人開発プロジェクト</text>
+        <text x="200" y="334">モダンな Web 技術</text>
+        <text x="200" y="378">Design, Music, Coffee</text>
+      </g>
+    </g>
+
+    <!-- 02 Toolkit -->
+    <g class="in d2">
+      <text class="mono" x="648" y="84" font-size="12" letter-spacing="3"><tspan fill="#4C8DFF">02</tspan><tspan fill="#7F93B2"> — TOOLKIT</tspan></text>
+    </g>
+    <g class="in d3">
+      <g stroke="#1C2B45">
+        <line x1="648" y1="128" x2="1128" y2="128"/>
+        <line x1="648" y1="216" x2="1128" y2="216"/>
+        <line x1="648" y1="304" x2="1128" y2="304"/>
+        <line x1="648" y1="394" x2="1128" y2="394"/>
+      </g>
+      <g class="mono" font-size="11" letter-spacing="2.5" fill="#7F93B2">
+        <text x="648" y="158">LANGUAGES</text>
+        <text x="648" y="246">FRAMEWORKS</text>
+        <text x="648" y="334">TOOLS</text>
+        <text x="1128" y="158" text-anchor="end">/ 03</text>
+        <text x="1128" y="246" text-anchor="end">/ 04</text>
+        <text x="1128" y="334" text-anchor="end">/ 04</text>
+      </g>
+      <g class="sans" font-size="20" fill="#E6EEF8" letter-spacing=".3">
+        <text x="648" y="194">TypeScript <tspan fill="#4C8DFF">·</tspan> JavaScript <tspan fill="#4C8DFF">·</tspan> Python</text>
+        <text x="648" y="282">React <tspan fill="#4C8DFF">·</tspan> Next.js <tspan fill="#4C8DFF">·</tspan> Node.js <tspan fill="#4C8DFF">·</tspan> Tailwind</text>
+        <text x="648" y="370">Git <tspan fill="#4C8DFF">·</tspan> Docker <tspan fill="#4C8DFF">·</tspan> VS Code <tspan fill="#4C8DFF">·</tspan> Figma</text>
+      </g>
+    </g>
+  </g>
+</svg>
