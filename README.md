@@ -1,6 +1,13 @@
-<!-- ============================== Header ============================== -->
+<!-- ============================== Header ==============================
+  画面幅 768px 以上（PC）：カットインなどの演出つきの SVG
+  それ以外（スマホ・GitHub アプリ）：軽く再生できるアニメーション WebP
+  どちらも tools/banner で作り直せます
+-->
 <p align="center">
-  <img src="./assets/banner-v8.svg" width="804" alt="Hello, World!" />
+  <picture>
+    <source media="(min-width: 768px)" srcset="https://github.com/raika10/raika10/raw/main/assets/banner-v8.svg" />
+    <img src="./assets/banner-mobile-v1.webp" width="804" alt="Hello, World!" />
+  </picture>
 </p>
 
 <p align="center">

@@ -1,0 +1,42 @@
+"""スマホ用バナー：流体の各コマ＋前景（overlay.png）を合成して、ループするアニメーション WebP にする。
+
+    python compose.py <出力 .webp> [fps] [quality]
+
+SVG のバナーは動くたびに画像全体を描き直すため、スマホでは処理が追いつかず止まることがある。
+こちらは 1 コマずつ表示するだけの普通のアニメーション画像なので、スマホでも軽く再生できる。
+"""
+import sys
+from pathlib import Path
+
+from PIL import Image, ImageDraw
+
+here = Path(__file__).resolve().parent
+out = Path(sys.argv[1])
+fps = float(sys.argv[2]) if len(sys.argv) > 2 else 20
+quality = int(sys.argv[3]) if len(sys.argv) > 3 else 80
+
+overlay = Image.open(here / ".cache" / "overlay.png").convert("RGBA")
+W, H = overlay.size
+scale = W / 804
+
+# カードの角丸（SVG の clipPath と同じ rx=20 を倍率に合わせる）
+mask = Image.new("L", (W, H), 0)
+ImageDraw.Draw(mask).rounded_rectangle((0, 0, W - 1, H - 1), radius=round(20 * scale), fill=255)
+
+frames = []
+for p in sorted((here / ".cache" / "frames").glob("f*.png")):
+    fluid = Image.open(p).convert("RGB").resize((W, H), Image.BICUBIC)  # 柔らかい表現なので拡大で十分
+    card = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    card.paste(fluid, (0, 0), mask)
+    frames.append(Image.alpha_composite(card, overlay))
+
+frames[0].save(
+    out,
+    save_all=True,
+    append_images=frames[1:],
+    duration=round(1000 / fps),
+    loop=0,
+    quality=quality,
+    method=4,
+)
+print(f"{len(frames)} frames {W}x{H} -> {out} ({out.stat().st_size / 1024:.0f} KB)")
