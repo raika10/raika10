@@ -41,7 +41,6 @@ const C = {
 };
 const SANS = `'Inter','Segoe UI',-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif`;
 const MONO = `'JetBrains Mono','SF Mono',SFMono-Regular,Consolas,Menlo,monospace`;
-const ACCENTS = [C.emerald, C.cyan, C.mint];
 
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const r1 = (n) => Math.round(n * 10) / 10;
@@ -255,8 +254,7 @@ function statsCard({ login, stats }) {
       const delay = 0.2 + i * 0.08;
       return `${roller(fmt(value), { x, y, size: 26, weight: 700, fill: C.text, cls: "k-sans", cw: 15, delay })}
 <g class="k-slide" style="animation-delay:${(delay + 0.15).toFixed(2)}s">
-  <rect x="${x}" y="${y + 13}" width="5" height="5" rx="1.2" fill="${ACCENTS[i % 3]}"/>
-  <text class="k-mono" x="${x + 11}" y="${y + 18.5}" font-size="9.5" fill="${C.muted}" letter-spacing=".9">${label}</text>
+  <text class="k-mono" x="${x}" y="${y + 18.5}" font-size="9.5" fill="${C.muted}" letter-spacing=".9">${label}</text>
 </g>`;
     })
     .join("\n");
