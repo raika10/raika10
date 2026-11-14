@@ -86,7 +86,7 @@ async function fetchData() {
           repositories(ownerAffiliations:OWNER,isFork:false,privacy:PUBLIC,first:100,after:$after){
             totalCount
             pageInfo{ hasNextPage endCursor }
-            nodes{ name stargazerCount languages(first:12,orderBy:{field:SIZE,direction:DESC}){ edges{ size node{ name } } } }
+            nodes{ name stargazerCount languages(first:12,orderBy:{field:SIZE,direction:DESC}){ edges{ size node{ name color } } } }
           }
         }
       }`,
@@ -103,18 +103,20 @@ async function fetchData() {
   // プロフィール README リポジトリ自身（生成スクリプト等）は言語集計から除外
   const skip = new Set([user.login.toLowerCase(), ...EXCLUDE_REPOS]);
   const bytes = new Map();
+  const colors = new Map(); // GitHub (Linguist) の言語カラー
   for (const r of repos) {
     if (skip.has(r.name.toLowerCase())) continue;
     for (const e of r.languages.edges) {
       if (EXCLUDE_LANGS.includes(e.node.name.toLowerCase())) continue;
       bytes.set(e.node.name, (bytes.get(e.node.name) || 0) + e.size);
+      if (e.node.color) colors.set(e.node.name, e.node.color);
     }
   }
   const total = [...bytes.values()].reduce((a, b) => a + b, 0);
   const languages = [...bytes.entries()]
     .sort((a, b) => b[1] - a[1])
     .slice(0, 6)
-    .map(([name, size]) => ({ name, pct: total ? (size / total) * 100 : 0 }));
+    .map(([name, size]) => ({ name, color: colors.get(name) || C.muted, pct: total ? (size / total) * 100 : 0 }));
 
   const cc = user.contributionsCollection;
   const days = cc.contributionCalendar.weeks.flatMap((w) => w.contributionDays);
@@ -270,8 +272,24 @@ function statsCard({ login, stats }) {
 function languagesCard({ languages }) {
   const W = 400, H = 200;
   const BX = 24, BW = 352, BY = 56, BH = 8;
-  const color = (i) => ACCENTS[i % 3];
-  const op = (i) => (i < 3 ? 1 : 0.5);
+  // 各言語のイメージカラー（GitHub の言語カラー）を使用
+  // 紺の背景に埋もれるほど暗い色だけ、色味を保ったまま白に寄せて見えるようにする
+  const lum = (hex) => {
+    const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255).map((c) => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4));
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  };
+  const visible = (hex) => {
+    if (!/^#[0-9a-f]{6}$/i.test(hex)) return hex;
+    let c = hex;
+    for (let t = 0.08; lum(c) < 0.06 && t <= 1; t += 0.08) {
+      c = "#" + [1, 3, 5].map((i) => {
+        const v = parseInt(hex.slice(i, i + 2), 16);
+        return Math.round(v + (255 - v) * t).toString(16).padStart(2, "0");
+      }).join("");
+    }
+    return c;
+  };
+  const color = (i) => visible(languages[i].color);
 
   let body;
   if (!languages.length) {
@@ -281,7 +299,7 @@ function languagesCard({ languages }) {
     const segs = languages
       .map((l, i) => {
         const w = i === languages.length - 1 ? BX + BW - x : (BW * l.pct) / 100;
-        const s = `<rect class="k-grow" style="animation-delay:${(0.2 + i * 0.1).toFixed(2)}s" x="${r1(x)}" y="${BY}" width="${r1(Math.max(w, 0))}" height="${BH}" fill="${color(i)}" fill-opacity="${op(i)}"/>`;
+        const s = `<rect class="k-grow" style="animation-delay:${(0.2 + i * 0.1).toFixed(2)}s" x="${r1(x)}" y="${BY}" width="${r1(Math.max(w, 0))}" height="${BH}" fill="${color(i)}"/>`;
         x += w;
         return s;
       })
@@ -304,7 +322,7 @@ function languagesCard({ languages }) {
         const cy = 106 + Math.floor(i / 2) * 30;
         const delay = 0.45 + i * 0.08;
         return `<g class="k-slide" style="animation-delay:${delay.toFixed(2)}s">
-  <rect x="${cx}" y="${cy - 8}" width="8" height="8" rx="2" fill="${color(i)}" fill-opacity="${op(i)}"/>
+  <rect x="${cx}" y="${cy - 8}" width="8" height="8" rx="2" fill="${color(i)}"/>
   <text class="k-sans" x="${cx + 16}" y="${cy}" font-size="13" fill="${C.soft}">${esc(l.name)}</text>
 </g>
 ${roller(`${l.pct.toFixed(1)}%`, { x: cx + 164, y: cy, size: 11, fill: C.muted, cls: "k-mono", cw: 6.6, mono: true, anchor: "end", delay: delay + 0.1, dur: 1.2 })}`;
