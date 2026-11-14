@@ -1,159 +1,100 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="580" viewBox="0 0 1200 580" role="img" aria-label="About Me / My Toolkit">
-  <defs>
-    <linearGradient id="panel" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#5ADBB4"/>
-      <stop offset="1" stop-color="#26AF86"/>
-    </linearGradient>
-    <linearGradient id="head" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0" stop-color="#4FD3AB"/>
-      <stop offset="1" stop-color="#2DB88E"/>
-    </linearGradient>
-    <radialGradient id="mint" cx=".35" cy=".3" r=".75">
-      <stop offset="0" stop-color="#B8F5E1"/>
-      <stop offset=".45" stop-color="#4FD3AB"/>
-      <stop offset="1" stop-color="#22A982"/>
-    </radialGradient>
-    <radialGradient id="pearl" cx=".35" cy=".3" r=".75">
-      <stop offset="0" stop-color="#FFFFFF"/>
-      <stop offset=".55" stop-color="#F3F6F7"/>
-      <stop offset="1" stop-color="#D6DEE2"/>
-    </radialGradient>
-    <filter id="card" x="-5%" y="-5%" width="110%" height="115%">
-      <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#1F2933" flood-opacity=".12"/>
-    </filter>
-    <filter id="soft" x="-20%" y="-20%" width="140%" height="150%">
-      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#1F2933" flood-opacity=".1"/>
-    </filter>
-    <filter id="sh" x="-60%" y="-60%" width="220%" height="240%">
-      <feDropShadow dx="0" dy="5" stdDeviation="5" flood-color="#0F3D30" flood-opacity=".2"/>
-    </filter>
-    <clipPath id="clip"><rect x="24" y="20" width="1152" height="532" rx="18"/></clipPath>
-  </defs>
+<defs>
+<filter id="card" x="-5%" y="-8%" width="110%" height="125%">
+  <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#1F2933" flood-opacity=".12"/>
+</filter>
+<filter id="sh" x="-30%" y="-60%" width="160%" height="240%">
+  <feDropShadow dx="0" dy="5" stdDeviation="5" flood-color="#0F3D30" flood-opacity=".2"/>
+</filter>
+<filter id="glow" x="-10%" y="-50%" width="120%" height="200%">
+  <feGaussianBlur stdDeviation="2.5" result="b"/>
+  <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+</filter>
+<linearGradient id="btn" x1="0" y1="0" x2="1" y2="1">
+  <stop offset="0" stop-color="#5ADBB4"/><stop offset="1" stop-color="#2DB88E"/>
+</linearGradient>
+<clipPath id="clip"><rect x="24" y="20" width="1152" height="532" rx="18"/></clipPath><linearGradient id="g1" gradientUnits="userSpaceOnUse" x1="700" y1="0" x2="1240" y2="0"><stop offset="0" stop-color="#4FD3AB" stop-opacity="0"/><stop offset=".25" stop-color="#4FD3AB"/><stop offset=".7" stop-color="#2DB88E"/><stop offset="1" stop-color="#2DB88E" stop-opacity="0"/></linearGradient><linearGradient id="gw" gradientUnits="userSpaceOnUse" x1="-20" y1="0" x2="470" y2="0"><stop offset="0" stop-color="#FFFFFF" stop-opacity="0"/><stop offset=".25" stop-color="#FFFFFF"/><stop offset=".7" stop-color="#FFFFFF"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/></linearGradient>
+<linearGradient id="panel" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5ADBB4"/><stop offset="1" stop-color="#26AF86"/></linearGradient>
+<linearGradient id="head" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#4FD3AB"/><stop offset="1" stop-color="#2DB88E"/></linearGradient>
+<filter id="soft" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#1F2933" flood-opacity=".1"/></filter></defs>
+<style>
+.sans { font-family: 'Segoe UI', 'Helvetica Neue', 'Hiragino Sans', 'Yu Gothic', Arial, sans-serif; }
+.in   { animation: rise .9s cubic-bezier(.2,.8,.2,1) both; }
+.draw { stroke-dasharray: 1000; animation: draw 2.6s cubic-bezier(.65,0,.25,1) both; }
+.ping { transform-box: fill-box; transform-origin: center; animation: ping 2.4s ease-out infinite; }
+.bar  { transform-box: fill-box; transform-origin: left; animation: grow 1.2s cubic-bezier(.2,.8,.2,1) both; }
+@keyframes rise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+@keyframes draw { from { stroke-dashoffset: 1000; } to { stroke-dashoffset: 0; } }
+@keyframes ping { 0% { opacity: .55; transform: scale(1); } 100% { opacity: 0; transform: scale(1.15,1.6); } }
+@keyframes grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 
-  <style>
-    .sans { font-family: 'Segoe UI', 'Helvetica Neue', 'Hiragino Sans', 'Yu Gothic', Arial, sans-serif; }
-    .in   { animation: rise .9s cubic-bezier(.2,.8,.2,1) both; }
-    .slide{ animation: slide 1s cubic-bezier(.2,.8,.2,1) both; }
-    .card { animation: rise 1s cubic-bezier(.2,.8,.2,1) both; }
-    .pop  { transform-box: fill-box; transform-origin: center; animation: pop .8s cubic-bezier(.34,1.56,.64,1) both; }
-    .spin { transform-box: fill-box; transform-origin: center; animation: spin 18s linear infinite; }
-    .f1 { animation: float 6s ease-in-out infinite; }
-    .f2 { animation: float 7.5s ease-in-out -2s infinite; }
-    .f3 { animation: float 5s ease-in-out -1s infinite; }
-    .bar  { transform-box: fill-box; transform-origin: left; animation: grow 1.2s cubic-bezier(.2,.8,.2,1) both; }
-    @keyframes rise  { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
-    @keyframes slide { from { opacity: 0; transform: translateX(-40px); } to { opacity: 1; transform: none; } }
-    @keyframes pop   { from { opacity: 0; transform: scale(0); } to { opacity: 1; transform: scale(1); } }
-    @keyframes spin  { to { transform: rotate(360deg); } }
-    @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-    @keyframes grow  { from { transform: scaleX(0); } to { transform: scaleX(1); } }
-  </style>
-
-  <rect x="24" y="20" width="1152" height="532" rx="18" fill="#FFFFFF" filter="url(#card)"/>
-
-  <g clip-path="url(#clip)">
-    <!-- ===== left mint panel ===== -->
-    <g class="slide">
-      <rect x="24" y="20" width="420" height="532" fill="url(#panel)"/>
-      <g fill="#FFFFFF">
-        <g class="f1"><circle cx="400" cy="70"  r="46" fill-opacity=".10"/></g>
-        <g class="f2"><circle cx="70"  cy="500" r="64" fill-opacity=".08"/></g>
-        <g class="f3"><circle cx="380" cy="470" r="14" fill-opacity=".18"/></g>
-      </g>
-
-      <!-- avatar -->
-      <circle class="spin" cx="234" cy="140" r="70" fill="none" stroke="#FFFFFF" stroke-opacity=".6" stroke-width="2" stroke-dasharray="3 9" stroke-linecap="round"/>
-      <circle cx="234" cy="140" r="56" fill="#FFFFFF" filter="url(#sh)"/>
-      <text class="sans" x="234" y="158" text-anchor="middle" font-size="50" font-weight="800" fill="#2DB88E">R</text>
-
-      <g class="sans" fill="#FFFFFF">
-        <text x="72" y="262" font-size="11" letter-spacing="3" fill-opacity=".8">WHO I AM</text>
-        <text x="72" y="298" font-size="32" font-weight="700">About Me</text>
-        <text x="72" y="330" font-size="13.5" fill-opacity=".92">シンプルで、長く愛せるものが好きです。</text>
-        <text x="72" y="353" font-size="13.5" fill-opacity=".92">Web を中心に、つくることを楽しんでいます。</text>
-
-        <line x1="72" y1="378" x2="396" y2="378" stroke="#FFFFFF" stroke-opacity=".35"/>
-        <g font-size="10.5" letter-spacing="2.5" fill-opacity=".78">
-          <text x="92" y="408">NOW</text>
-          <text x="92" y="456">LEARNING</text>
-          <text x="92" y="504">LIKES</text>
-        </g>
-        <g font-size="15" font-weight="600">
-          <text x="92" y="429">個人開発プロジェクト</text>
-          <text x="92" y="477">モダンな Web 技術</text>
-          <text x="92" y="525">Design, Music, Coffee</text>
-        </g>
-        <circle cx="76" cy="424" r="4"/>
-        <circle cx="76" cy="472" r="4"/>
-        <circle cx="76" cy="520" r="4"/>
-      </g>
+.slide { animation: slide 1s cubic-bezier(.2,.8,.2,1) both; }
+.card  { animation: rise 1s cubic-bezier(.2,.8,.2,1) both; }
+.spin  { transform-box: fill-box; transform-origin: center; animation: spin 18s linear infinite; }
+@keyframes slide { from { opacity: 0; transform: translateX(-40px); } to { opacity: 1; transform: none; } }
+@keyframes spin  { to { transform: rotate(360deg); } }</style>
+<rect x="24" y="20" width="1152" height="532" rx="18" fill="#FFFFFF" filter="url(#card)"/>
+<g clip-path="url(#clip)">
+<g class="slide">
+  <rect x="24" y="20" width="420" height="532" fill="url(#panel)"/>
+  <g fill="none" stroke="url(#gw)" stroke-width="1" stroke-linecap="round"><path class="draw" style="animation-delay:0.40s" pathLength="1000" stroke-opacity="0.20" d="M-20 165.0 C 140 35.0, 330 245.0, 470 100.0"><animate attributeName="d" dur="12s" begin="-0.00s" repeatCount="indefinite" calcMode="spline" keyTimes="0.000;0.500;1.000" keySplines=".45 0 .55 1;.45 0 .55 1" values="M-20 165.0 C 140 35.0, 330 245.0, 470 100.0;M-20 160.0 C 140 215.0, 330 45.0, 470 175.0;M-20 165.0 C 140 35.0, 330 245.0, 470 100.0"/></path><path class="draw" style="animation-delay:0.46s" pathLength="1000" stroke-opacity="0.34" d="M-20 168.8 C 140 48.8, 330 233.8, 470 105.0"><animate attributeName="d" dur="12s" begin="-0.25s" repeatCount="indefinite" calcMode="spline" keyTimes="0.000;0.500;1.000" keySplines=".45 0 .55 1;.45 0 .55 1" values="M-20 168.8 C 140 48.8, 330 233.8, 470 105.0;M-20 157.5 C 140 203.8, 330 58.8, 470 171.2;M-20 168.8 C 140 48.8, 330 233.8, 470 105.0"/></path><path class="draw" style="animation-delay:0.52s" pathLength="1000" stroke-opacity="0.48" d="M-20 172.5 C 140 62.5, 330 222.5, 470 110.0"><animate attributeName="d" dur="12s" begin="-0.50s" repeatCount="indefinite" calcMode="spline" keyTimes="0.000;0.500;1.000" keySplines=".45 0 .55 1;.45 0 .55 1" values="M-20 172.5 C 140 62.5, 330 222.5, 470 110.0;M-20 155.0 C 140 192.5, 330 72.5, 470 167.5;M-20 172.5 C 140 62.5, 330 222.5, 470 110.0"/></path><path class="draw" style="animation-delay:0.58s" pathLength="1000" stroke-opacity="0.61" d="M-20 176.2 C 140 76.2, 330 211.2, 470 115.0"><animate attributeName="d" dur="12s" begin="-0.75s" repeatCount="indefinite" calcMode="spline" keyTimes="0.000;0.500;1.000" keySplines=".45 0 .55 1;.45 0 .55 1" values="M-20 176.2 C 140 76.2, 330 211.2, 470 115.0;M-20 152.5 C 140 181.2, 330 86.2, 470 163.8;M-20 176.2 C 140 76.2, 330 211.2, 470 115.0"/></path><path class="draw" style="animation-delay:0.64s" pathLength="1000" stroke-opacity="0.75" d="M-20 180.0 C 140 90.0, 330 200.0, 470 120.0"><animate attributeName="d" dur="12s" begin="-1.00s" repeatCount="indefinite" calcMode="spline" keyTimes="0.000;0.500;1.000" keySplines=".45 0 .55 1;.45 0 .55 1" values="M-20 180.0 C 140 90.0, 330 200.0, 470 120.0;M-20 150.0 C 140 170.0, 330 100.0, 470 160.0;M-20 180.0 C 140 90.0, 330 200.0, 470 120.0"/></path><path class="draw" style="animation-delay:0.70s" pathLength="1000" stroke-opacity="0.61" d="M-20 183.8 C 140 103.8, 330 188.8, 470 125.0"><animate attributeName="d" dur="12s" begin="-1.25s" repeatCount="indefinite" calcMode="spline" keyTimes="0.000;0.500;1.000" keySplines=".45 0 .55 1;.45 0 .55 1" values="M-20 183.8 C 140 103.8, 330 188.8, 470 125.0;M-20 147.5 C 140 158.8, 330 113.8, 470 156.2;M-20 183.8 C 140 103.8, 330 188.8, 470 125.0"/></path><path class="draw" style="animation-delay:0.76s" pathLength="1000" stroke-opacity="0.48" d="M-20 187.5 C 140 117.5, 330 177.5, 470 130.0"><animate attributeName="d" dur="12s" begin="-1.50s" repeatCount="indefinite" calcMode="spline" keyTimes="0.000;0.500;1.000" keySplines=".45 0 .55 1;.45 0 .55 1" values="M-20 187.5 C 140 117.5, 330 177.5, 470 130.0;M-20 145.0 C 140 147.5, 330 127.5, 470 152.5;M-20 187.5 C 140 117.5, 330 177.5, 470 130.0"/></path><path class="draw" style="animation-delay:0.82s" pathLength="1000" stroke-opacity="0.34" d="M-20 191.2 C 140 131.2, 330 166.2, 470 135.0"><animate attributeName="d" dur="12s" begin="-1.75s" repeatCount="indefinite" calcMode="spline" keyTimes="0.000;0.500;1.000" keySplines=".45 0 .55 1;.45 0 .55 1" values="M-20 191.2 C 140 131.2, 330 166.2, 470 135.0;M-20 142.5 C 140 136.2, 330 141.2, 470 148.8;M-20 191.2 C 140 131.2, 330 166.2, 470 135.0"/></path><path class="draw" style="animation-delay:0.88s" pathLength="1000" stroke-opacity="0.20" d="M-20 195.0 C 140 145.0, 330 155.0, 470 140.0"><animate attributeName="d" dur="12s" begin="-2.00s" repeatCount="indefinite" calcMode="spline" keyTimes="0.000;0.500;1.000" keySplines=".45 0 .55 1;.45 0 .55 1" values="M-20 195.0 C 140 145.0, 330 155.0, 470 140.0;M-20 140.0 C 140 125.0, 330 155.0, 470 145.0;M-20 195.0 C 140 145.0, 330 155.0, 470 140.0"/></path></g>
+  <circle class="spin" cx="234" cy="140" r="70" fill="none" stroke="#FFFFFF" stroke-opacity=".6" stroke-width="2" stroke-dasharray="3 9" stroke-linecap="round"/>
+  <circle cx="234" cy="140" r="56" fill="#FFFFFF" filter="url(#sh)"/>
+  <text class="sans" x="234" y="158" text-anchor="middle" font-size="50" font-weight="800" fill="#2DB88E">R</text>
+  <g class="sans" fill="#FFFFFF">
+    <text x="72" y="262" font-size="11" letter-spacing="3" fill-opacity=".8">WHO I AM</text>
+    <text x="72" y="298" font-size="32" font-weight="700">About Me</text>
+    <text x="72" y="330" font-size="13.5" fill-opacity=".92">シンプルで、長く愛せるものが好きです。</text>
+    <text x="72" y="353" font-size="13.5" fill-opacity=".92">Web を中心に、つくることを楽しんでいます。</text>
+    <line x1="72" y1="378" x2="396" y2="378" stroke="#FFFFFF" stroke-opacity=".35"/>
+    <g font-size="10.5" letter-spacing="2.5" fill-opacity=".78">
+      <text x="92" y="408">NOW</text><text x="92" y="456">LEARNING</text><text x="92" y="504">LIKES</text>
     </g>
-
-    <!-- ===== right: toolkit ===== -->
-    <g class="sans in" style="animation-delay:.2s">
-      <text x="500" y="88" font-size="11" font-weight="700" letter-spacing="3" fill="#2DB88E">WHAT I USE</text>
-      <text x="500" y="128" font-size="32" font-weight="700" fill="#1F2933">My Toolkit</text>
-      <text x="500" y="158" font-size="14" fill="#8A949E">毎日の制作を支えている道具たち。</text>
-      <rect class="bar" style="animation-delay:.5s" x="500" y="172" width="48" height="4" rx="2" fill="#4FD3AB"/>
+    <g font-size="15" font-weight="600">
+      <text x="92" y="429">個人開発プロジェクト</text><text x="92" y="477">モダンな Web 技術</text><text x="92" y="525">Design, Music, Coffee</text>
     </g>
-
-    <g filter="url(#sh)">
-      <g class="pop" style="animation-delay:.4s"><g class="f1"><circle cx="1110" cy="80"  r="16" fill="url(#mint)"/></g></g>
-      <g class="pop" style="animation-delay:.5s"><g class="f2"><circle cx="1062" cy="122" r="8"  fill="url(#pearl)"/></g></g>
-      <g class="pop" style="animation-delay:.6s"><g class="f3"><circle cx="1000" cy="74"  r="5"  fill="url(#mint)"/></g></g>
-    </g>
-
-    <!-- card 1 -->
-    <g class="card" style="animation-delay:.35s">
-      <rect x="500" y="208" width="196" height="304" rx="12" fill="#FFFFFF" stroke="#EEF2F4" filter="url(#soft)"/>
-      <path d="M500 264 V220 a12 12 0 0 1 12 -12 h172 a12 12 0 0 1 12 12 V264 Z" fill="url(#head)"/>
-      <g class="sans" text-anchor="middle">
-        <text x="598" y="242" font-size="13" font-weight="700" letter-spacing="2.5" fill="#FFFFFF">LANGUAGES</text>
-        <text x="598" y="314" font-size="38" font-weight="800" fill="#2DB88E">03</text>
-        <text x="598" y="334" font-size="9.5" letter-spacing="2.5" fill="#A3ACB5">ITEMS</text>
-        <line x1="530" y1="352" x2="666" y2="352" stroke="#EEF2F4"/>
-        <g font-size="15" fill="#3B4650">
-          <text x="598" y="384">TypeScript</text>
-          <text x="598" y="414">JavaScript</text>
-          <text x="598" y="444">Python</text>
-        </g>
-      </g>
-    </g>
-
-    <!-- card 2 -->
-    <g class="card" style="animation-delay:.5s">
-      <rect x="718" y="208" width="196" height="304" rx="12" fill="#FFFFFF" stroke="#EEF2F4" filter="url(#soft)"/>
-      <path d="M718 264 V220 a12 12 0 0 1 12 -12 h172 a12 12 0 0 1 12 12 V264 Z" fill="url(#head)"/>
-      <g class="sans" text-anchor="middle">
-        <text x="816" y="242" font-size="13" font-weight="700" letter-spacing="2.5" fill="#FFFFFF">FRAMEWORKS</text>
-        <text x="816" y="314" font-size="38" font-weight="800" fill="#2DB88E">04</text>
-        <text x="816" y="334" font-size="9.5" letter-spacing="2.5" fill="#A3ACB5">ITEMS</text>
-        <line x1="748" y1="352" x2="884" y2="352" stroke="#EEF2F4"/>
-        <g font-size="15" fill="#3B4650">
-          <text x="816" y="384">React</text>
-          <text x="816" y="414">Next.js</text>
-          <text x="816" y="444">Node.js</text>
-          <text x="816" y="474">Tailwind CSS</text>
-        </g>
-      </g>
-    </g>
-
-    <!-- card 3 -->
-    <g class="card" style="animation-delay:.65s">
-      <rect x="936" y="208" width="196" height="304" rx="12" fill="#FFFFFF" stroke="#EEF2F4" filter="url(#soft)"/>
-      <path d="M936 264 V220 a12 12 0 0 1 12 -12 h172 a12 12 0 0 1 12 12 V264 Z" fill="url(#head)"/>
-      <g class="sans" text-anchor="middle">
-        <text x="1034" y="242" font-size="13" font-weight="700" letter-spacing="2.5" fill="#FFFFFF">TOOLS</text>
-        <text x="1034" y="314" font-size="38" font-weight="800" fill="#2DB88E">04</text>
-        <text x="1034" y="334" font-size="9.5" letter-spacing="2.5" fill="#A3ACB5">ITEMS</text>
-        <line x1="966" y1="352" x2="1102" y2="352" stroke="#EEF2F4"/>
-        <g font-size="15" fill="#3B4650">
-          <text x="1034" y="384">Git</text>
-          <text x="1034" y="414">Docker</text>
-          <text x="1034" y="444">VS Code</text>
-          <text x="1034" y="474">Figma</text>
-        </g>
-      </g>
-    </g>
+    <rect x="72" y="418" width="10" height="2" rx="1"/><rect x="72" y="466" width="10" height="2" rx="1"/><rect x="72" y="514" width="10" height="2" rx="1"/>
   </g>
+</g>
+<g fill="none" stroke="url(#g1)" stroke-width="1" stroke-linecap="round"><path class="draw" style="animation-delay:0.60s" pathLength="1000" stroke-opacity="0.12" d="M700 190.0 C 900 5.0, 1080 215.0, 1240 35.0"><animate attributeName="d" dur="13s" begin="-0.00s" repeatCount="indefinite" calcMode="spline" keyTimes="0.000;0.500;1.000" keySplines=".45 0 .55 1;.45 0 .55 1" values="M700 190.0 C 900 5.0, 1080 215.0, 1240 35.0;M700 180.0 C 900 195.0, 1080 20.0, 1240 105.0;M700 190.0 C 900 5.0, 1080 215.0, 1240 35.0"/></path><path class="draw" style="animation-delay:0.66s" pathLength="1000" stroke-opacity="0.27" d="M700 192.0 C 900 16.0, 1080 206.0, 1240 38.0"><animate attributeName="d" dur="13s" begin="-0.22s" repeatCount="indefinite" calcMode="spline" keyTimes="0.000;0.500;1.000" keySplines=".45 0 .55 1;.45 0 .55 1" values="M700 192.0 C 900 16.0, 1080 206.0, 1240 38.0;M700 178.0 C 900 186.0, 1080 30.0, 1240 102.0;M700 192.0 C 900 16.0, 1080 206.0, 1240 38.0"/></path><path class="draw" style="animation-delay:0.72s" pathLength="1000" stroke-opacity="0.41" d="M700 194.0 C 900 27.0, 1080 197.0, 1240 41.0"><animate attributeName="d" dur="13s" begin="-0.44s" repeatCount="indefinite" calcMode="spline" keyTimes="0.000;0.500;1.000" keySplines=".45 0 .55 1;.45 0 .55 1" values="M700 194.0 C 900 27.0, 1080 197.0, 1240 41.0;M700 176.0 C 900 177.0, 1080 40.0, 1240 99.0;M700 194.0 C 900 27.0, 1080 197.0, 1240 41.0"/></path><path class="draw" style="animation-delay:0.78s" pathLength="1000" stroke-opacity="0.56" d="M700 196.0 C 900 38.0, 1080 188.0, 1240 44.0"><animate attributeName="d" dur="13s" begin="-0.66s" repeatCount="indefinite" calcMode="spline" keyTimes="0.000;0.500;1.000" keySplines=".45 0 .55 1;.45 0 .55 1" values="M700 196.0 C 900 38.0, 1080 188.0, 1240 44.0;M700 174.0 C 900 168.0, 1080 50.0, 1240 96.0;M700 196.0 C 900 38.0, 1080 188.0, 1240 44.0"/></path><path class="draw" style="animation-delay:0.84s" pathLength="1000" stroke-opacity="0.70" d="M700 198.0 C 900 49.0, 1080 179.0, 1240 47.0"><animate attributeName="d" dur="13s" begin="-0.88s" repeatCount="indefinite" calcMode="spline" keyTimes="0.000;0.500;1.000" keySplines=".45 0 .55 1;.45 0 .55 1" values="M700 198.0 C 900 49.0, 1080 179.0, 1240 47.0;M700 172.0 C 900 159.0, 1080 60.0, 1240 93.0;M700 198.0 C 900 49.0, 1080 179.0, 1240 47.0"/></path><path class="draw" style="animation-delay:0.90s" pathLength="1000" stroke-opacity="0.85" d="M700 200.0 C 900 60.0, 1080 170.0, 1240 50.0"><animate attributeName="d" dur="13s" begin="-1.10s" repeatCount="indefinite" calcMode="spline" keyTimes="0.000;0.500;1.000" keySplines=".45 0 .55 1;.45 0 .55 1" values="M700 200.0 C 900 60.0, 1080 170.0, 1240 50.0;M700 170.0 C 900 150.0, 1080 70.0, 1240 90.0;M700 200.0 C 900 60.0, 1080 170.0, 1240 50.0"/></path><path class="draw" style="animation-delay:0.96s" pathLength="1000" stroke-opacity="0.70" d="M700 202.0 C 900 71.0, 1080 161.0, 1240 53.0"><animate attributeName="d" dur="13s" begin="-1.32s" repeatCount="indefinite" calcMode="spline" keyTimes="0.000;0.500;1.000" keySplines=".45 0 .55 1;.45 0 .55 1" values="M700 202.0 C 900 71.0, 1080 161.0, 1240 53.0;M700 168.0 C 900 141.0, 1080 80.0, 1240 87.0;M700 202.0 C 900 71.0, 1080 161.0, 1240 53.0"/></path><path class="draw" style="animation-delay:1.02s" pathLength="1000" stroke-opacity="0.56" d="M700 204.0 C 900 82.0, 1080 152.0, 1240 56.0"><animate attributeName="d" dur="13s" begin="-1.54s" repeatCount="indefinite" calcMode="spline" keyTimes="0.000;0.500;1.000" keySplines=".45 0 .55 1;.45 0 .55 1" values="M700 204.0 C 900 82.0, 1080 152.0, 1240 56.0;M700 166.0 C 900 132.0, 1080 90.0, 1240 84.0;M700 204.0 C 900 82.0, 1080 152.0, 1240 56.0"/></path><path class="draw" style="animation-delay:1.08s" pathLength="1000" stroke-opacity="0.41" d="M700 206.0 C 900 93.0, 1080 143.0, 1240 59.0"><animate attributeName="d" dur="13s" begin="-1.76s" repeatCount="indefinite" calcMode="spline" keyTimes="0.000;0.500;1.000" keySplines=".45 0 .55 1;.45 0 .55 1" values="M700 206.0 C 900 93.0, 1080 143.0, 1240 59.0;M700 164.0 C 900 123.0, 1080 100.0, 1240 81.0;M700 206.0 C 900 93.0, 1080 143.0, 1240 59.0"/></path><path class="draw" style="animation-delay:1.14s" pathLength="1000" stroke-opacity="0.27" d="M700 208.0 C 900 104.0, 1080 134.0, 1240 62.0"><animate attributeName="d" dur="13s" begin="-1.98s" repeatCount="indefinite" calcMode="spline" keyTimes="0.000;0.500;1.000" keySplines=".45 0 .55 1;.45 0 .55 1" values="M700 208.0 C 900 104.0, 1080 134.0, 1240 62.0;M700 162.0 C 900 114.0, 1080 110.0, 1240 78.0;M700 208.0 C 900 104.0, 1080 134.0, 1240 62.0"/></path><path class="draw" style="animation-delay:1.20s" pathLength="1000" stroke-opacity="0.12" d="M700 210.0 C 900 115.0, 1080 125.0, 1240 65.0"><animate attributeName="d" dur="13s" begin="-2.20s" repeatCount="indefinite" calcMode="spline" keyTimes="0.000;0.500;1.000" keySplines=".45 0 .55 1;.45 0 .55 1" values="M700 210.0 C 900 115.0, 1080 125.0, 1240 65.0;M700 160.0 C 900 105.0, 1080 120.0, 1240 75.0;M700 210.0 C 900 115.0, 1080 125.0, 1240 65.0"/></path></g><g fill="none" stroke-linecap="round" filter="url(#glow)"><path pathLength="1000" stroke="#1FA77E" stroke-width="1.6" stroke-opacity="0.35" stroke-dasharray="220 3000" stroke-dashoffset="220" d="M700 200.0 C 900 60.0, 1080 170.0, 1240 50.0"><animate attributeName="d" dur="13s" begin="-1.10s" repeatCount="indefinite" calcMode="spline" keyTimes="0.000;0.500;1.000" keySplines=".45 0 .55 1;.45 0 .55 1" values="M700 200.0 C 900 60.0, 1080 170.0, 1240 50.0;M700 170.0 C 900 150.0, 1080 70.0, 1240 90.0;M700 200.0 C 900 60.0, 1080 170.0, 1240 50.0"/><animate attributeName="stroke-dashoffset" values="220;-1000" dur="5s" begin="3s" repeatCount="indefinite" calcMode="spline" keyTimes="0;1" keySplines=".5 0 .3 1"/></path><path pathLength="1000" stroke="#1FA77E" stroke-width="2.4" stroke-opacity="1" stroke-dasharray="60 3000" stroke-dashoffset="60" d="M700 200.0 C 900 60.0, 1080 170.0, 1240 50.0"><animate attributeName="d" dur="13s" begin="-1.10s" repeatCount="indefinite" calcMode="spline" keyTimes="0.000;0.500;1.000" keySplines=".45 0 .55 1;.45 0 .55 1" values="M700 200.0 C 900 60.0, 1080 170.0, 1240 50.0;M700 170.0 C 900 150.0, 1080 70.0, 1240 90.0;M700 200.0 C 900 60.0, 1080 170.0, 1240 50.0"/><animate attributeName="stroke-dashoffset" values="60;-1000" dur="5s" begin="3s" repeatCount="indefinite" calcMode="spline" keyTimes="0;1" keySplines=".5 0 .3 1"/></path></g>
+<g class="sans in" style="animation-delay:.2s">
+  <text x="500" y="88" font-size="11" font-weight="700" letter-spacing="3" fill="#2DB88E">WHAT I USE</text>
+  <text x="500" y="128" font-size="32" font-weight="700" fill="#1F2933">My Toolkit</text>
+  <text x="500" y="158" font-size="14" fill="#8A949E">毎日の制作を支えている道具たち。</text>
+  <rect class="bar" style="animation-delay:.5s" x="500" y="172" width="48" height="3" rx="1.5" fill="#4FD3AB"/>
+</g>
+<g class="card" style="animation-delay:0.35s">
+  <rect x="500" y="208" width="196" height="304" rx="12" fill="#FFFFFF" stroke="#EEF2F4" filter="url(#soft)"/>
+  <path d="M500 264 V220 a12 12 0 0 1 12 -12 h172 a12 12 0 0 1 12 12 V264 Z" fill="url(#head)"/>
+  <g class="sans" text-anchor="middle">
+    <text x="598" y="242" font-size="13" font-weight="700" letter-spacing="2.5" fill="#FFFFFF">LANGUAGES</text>
+    <text x="598" y="314" font-size="38" font-weight="800" fill="#2DB88E">03</text>
+    <text x="598" y="334" font-size="9.5" letter-spacing="2.5" fill="#A3ACB5">ITEMS</text>
+    <line x1="530" y1="352" x2="666" y2="352" stroke="#EEF2F4"/>
+    <g font-size="15" fill="#3B4650"><text x="598" y="384">TypeScript</text><text x="598" y="414">JavaScript</text><text x="598" y="444">Python</text></g>
+  </g>
+</g>
+<g class="card" style="animation-delay:0.5s">
+  <rect x="718" y="208" width="196" height="304" rx="12" fill="#FFFFFF" stroke="#EEF2F4" filter="url(#soft)"/>
+  <path d="M718 264 V220 a12 12 0 0 1 12 -12 h172 a12 12 0 0 1 12 12 V264 Z" fill="url(#head)"/>
+  <g class="sans" text-anchor="middle">
+    <text x="816" y="242" font-size="13" font-weight="700" letter-spacing="2.5" fill="#FFFFFF">FRAMEWORKS</text>
+    <text x="816" y="314" font-size="38" font-weight="800" fill="#2DB88E">04</text>
+    <text x="816" y="334" font-size="9.5" letter-spacing="2.5" fill="#A3ACB5">ITEMS</text>
+    <line x1="748" y1="352" x2="884" y2="352" stroke="#EEF2F4"/>
+    <g font-size="15" fill="#3B4650"><text x="816" y="384">React</text><text x="816" y="414">Next.js</text><text x="816" y="444">Node.js</text><text x="816" y="474">Tailwind CSS</text></g>
+  </g>
+</g>
+<g class="card" style="animation-delay:0.65s">
+  <rect x="936" y="208" width="196" height="304" rx="12" fill="#FFFFFF" stroke="#EEF2F4" filter="url(#soft)"/>
+  <path d="M936 264 V220 a12 12 0 0 1 12 -12 h172 a12 12 0 0 1 12 12 V264 Z" fill="url(#head)"/>
+  <g class="sans" text-anchor="middle">
+    <text x="1034" y="242" font-size="13" font-weight="700" letter-spacing="2.5" fill="#FFFFFF">TOOLS</text>
+    <text x="1034" y="314" font-size="38" font-weight="800" fill="#2DB88E">04</text>
+    <text x="1034" y="334" font-size="9.5" letter-spacing="2.5" fill="#A3ACB5">ITEMS</text>
+    <line x1="966" y1="352" x2="1102" y2="352" stroke="#EEF2F4"/>
+    <g font-size="15" fill="#3B4650"><text x="1034" y="384">Git</text><text x="1034" y="414">Docker</text><text x="1034" y="444">VS Code</text><text x="1034" y="474">Figma</text></g>
+  </g>
+</g>
+</g>
 </svg>
