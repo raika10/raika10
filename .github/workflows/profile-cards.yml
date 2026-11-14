@@ -1,0 +1,54 @@
+name: Profile Cards
+
+on:
+  schedule:
+    - cron: "0 15 * * *" # 毎日 00:00 JST
+  workflow_dispatch: # Actions タブから手動実行
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/profile-cards.yml"
+      - ".github/scripts/**"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: profile-cards
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Generate contribution snake
+        uses: Platane/snk/svg-only@v3
+        with:
+          github_user_name: ${{ github.repository_owner }}
+          outputs: |
+            .cache/snake-raw.svg?color_snake=#38BDF8&color_dots=#141D2F,#0B4D3B,#0E7A58,#10B981,#6EE7B7
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Generate cards
+        run: node .github/scripts/profile-cards.mjs
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_USER: ${{ github.repository_owner }}
+          SNAKE_INPUT: .cache/snake-raw.svg
+
+      - name: Commit updated cards
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/generated
+          if git diff --cached --quiet; then
+            echo "No changes."
+            exit 0
+          fi
+          git commit -m "chore: update profile cards"
+          git push

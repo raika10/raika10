@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="200" viewBox="0 0 400 200" role="img" aria-label="GitHub Stats">
+<defs>
+  <linearGradient id="k-hair" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#10B981" stop-opacity="0"/>
+    <stop offset=".35" stop-color="#10B981"/>
+    <stop offset=".65" stop-color="#38BDF8"/>
+    <stop offset="1" stop-color="#38BDF8" stop-opacity="0"/>
+  </linearGradient>
+  <radialGradient id="k-glow" gradientUnits="userSpaceOnUse" cx="48" cy="0" r="240">
+    <stop offset="0" stop-color="#10B981" stop-opacity=".11"/>
+    <stop offset="1" stop-color="#10B981" stop-opacity="0"/>
+  </radialGradient>
+  <clipPath id="k-clip"><rect width="400" height="200" rx="14"/></clipPath>
+  
+</defs>
+<style>
+  .k-sans{font-family:'Inter','Segoe UI',-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif}
+  .k-mono{font-family:'JetBrains Mono','SF Mono',SFMono-Regular,Consolas,Menlo,monospace}
+  .k-in{animation:k-in .8s cubic-bezier(.2,.8,.2,1) both}
+  @keyframes k-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  
+  @media (prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+<g clip-path="url(#k-clip)">
+  <rect width="400" height="200" fill="#0B1220"/>
+  <rect width="400" height="200" fill="url(#k-glow)"/>
+  <rect x="72" y="0" width="256" height="1" fill="url(#k-hair)"/>
+</g>
+<rect x=".5" y=".5" width="399" height="199" rx="13.5" fill="none" stroke="#94A3B8" stroke-opacity=".16"/>
+<g class="k-mono" font-size="11" letter-spacing="1.6">
+  <rect x="24" y="24.5" width="6" height="6" rx="1.5" fill="#10B981"/>
+  <text x="38" y="31" fill="#6EE7B7">GITHUB STATS</text>
+  <text x="376" y="31" fill="#64748B" text-anchor="end" letter-spacing="1">@raika10</text>
+</g>
+<g stroke="#94A3B8" stroke-opacity=".09">
+  <line x1="24" y1="128" x2="376" y2="128"/>
+  <line x1="136" y1="64" x2="136" y2="184"/>
+  <line x1="260" y1="64" x2="260" y2="184"/>
+</g><g class="k-in" style="animation-delay:0.10s">
+  <text class="k-sans" x="24" y="94" font-size="26" font-weight="700" fill="#F8FAFC" letter-spacing="-.5">0</text>
+  <rect x="24" y="107" width="5" height="5" rx="1.2" fill="#10B981"/>
+  <text class="k-mono" x="35" y="112.5" font-size="9.5" fill="#94A3B8" letter-spacing=".9">TOTAL STARS</text>
+</g>
+<g class="k-in" style="animation-delay:0.17s">
+  <text class="k-sans" x="148" y="94" font-size="26" font-weight="700" fill="#F8FAFC" letter-spacing="-.5">326</text>
+  <rect x="148" y="107" width="5" height="5" rx="1.2" fill="#38BDF8"/>
+  <text class="k-mono" x="159" y="112.5" font-size="9.5" fill="#94A3B8" letter-spacing=".9">COMMITS · 1Y</text>
+</g>
+<g class="k-in" style="animation-delay:0.24s">
+  <text class="k-sans" x="272" y="94" font-size="26" font-weight="700" fill="#F8FAFC" letter-spacing="-.5">75</text>
+  <rect x="272" y="107" width="5" height="5" rx="1.2" fill="#6EE7B7"/>
+  <text class="k-mono" x="283" y="112.5" font-size="9.5" fill="#94A3B8" letter-spacing=".9">PULL REQUESTS</text>
+</g>
+<g class="k-in" style="animation-delay:0.31s">
+  <text class="k-sans" x="24" y="160" font-size="26" font-weight="700" fill="#F8FAFC" letter-spacing="-.5">5</text>
+  <rect x="24" y="173" width="5" height="5" rx="1.2" fill="#10B981"/>
+  <text class="k-mono" x="35" y="178.5" font-size="9.5" fill="#94A3B8" letter-spacing=".9">ISSUES</text>
+</g>
+<g class="k-in" style="animation-delay:0.38s">
+  <text class="k-sans" x="148" y="160" font-size="26" font-weight="700" fill="#F8FAFC" letter-spacing="-.5">404</text>
+  <rect x="148" y="173" width="5" height="5" rx="1.2" fill="#38BDF8"/>
+  <text class="k-mono" x="159" y="178.5" font-size="9.5" fill="#94A3B8" letter-spacing=".9">CONTRIBS · 1Y</text>
+</g>
+<g class="k-in" style="animation-delay:0.45s">
+  <text class="k-sans" x="272" y="160" font-size="26" font-weight="700" fill="#F8FAFC" letter-spacing="-.5">7</text>
+  <rect x="272" y="173" width="5" height="5" rx="1.2" fill="#6EE7B7"/>
+  <text class="k-mono" x="283" y="178.5" font-size="9.5" fill="#94A3B8" letter-spacing=".9">REPOSITORIES</text>
+</g>
+</svg>

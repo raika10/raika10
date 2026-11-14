@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="804" height="300" viewBox="0 0 804 300" role="img" aria-label="Hello, World!">
+<defs>
+  <clipPath id="clip"><rect width="804" height="300" rx="20"/></clipPath>
+  <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse" x="18" y="22">
+    <path d="M32 0H0V32" fill="none" stroke="#94A3B8" stroke-opacity=".1"/>
+  </pattern>
+  <radialGradient id="fade" cx=".5" cy=".42" r=".6">
+    <stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/>
+  </radialGradient>
+  <mask id="gridMask"><rect width="804" height="300" fill="url(#fade)"/></mask>
+  <filter id="blur" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="46"/></filter>
+  <filter id="glow" x="-10%" y="-50%" width="120%" height="200%">
+    <feGaussianBlur stdDeviation="2.4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+  <linearGradient id="word" gradientUnits="userSpaceOnUse" x1="390" y1="0" x2="700" y2="0" spreadMethod="reflect">
+    <stop offset="0" stop-color="#10B981"/><stop offset=".55" stop-color="#38BDF8"/><stop offset="1" stop-color="#6EE7B7"/>
+    <animateTransform attributeName="gradientTransform" type="translate" values="0 0;310 0;0 0" dur="12s" repeatCount="indefinite" calcMode="spline" keyTimes="0;.5;1" keySplines=".45 0 .55 1;.45 0 .55 1"/>
+  </linearGradient>
+  <linearGradient id="silk" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="804" y2="0">
+    <stop offset="0" stop-color="#10B981" stop-opacity="0"/>
+    <stop offset=".25" stop-color="#10B981"/>
+    <stop offset=".75" stop-color="#38BDF8"/>
+    <stop offset="1" stop-color="#38BDF8" stop-opacity="0"/>
+  </linearGradient>
+</defs>
+<style>
+  .sans{font-family:'Inter','Segoe UI',-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif}
+  .mono{font-family:'JetBrains Mono','SF Mono',SFMono-Regular,Consolas,Menlo,monospace}
+  .in{animation:in 1s cubic-bezier(.2,.8,.2,1) both}
+  .draw{stroke-dasharray:1000;animation:draw 2.6s cubic-bezier(.65,0,.25,1) both}
+  .driftA{animation:driftA 18s ease-in-out infinite alternate}
+  .driftB{animation:driftB 22s ease-in-out infinite alternate}
+  @keyframes in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  @keyframes draw{from{stroke-dashoffset:1000}to{stroke-dashoffset:0}}
+  @keyframes driftA{to{transform:translate(70px,18px)}}
+  @keyframes driftB{to{transform:translate(-80px,-14px)}}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+
+<g clip-path="url(#clip)">
+  <rect width="804" height="300" fill="#0B1220"/>
+  <g filter="url(#blur)">
+    <g class="driftA"><ellipse cx="170" cy="24" rx="230" ry="96" fill="#10B981" fill-opacity=".26"/></g>
+    <g class="driftB"><ellipse cx="660" cy="300" rx="250" ry="100" fill="#38BDF8" fill-opacity=".2"/></g>
+  </g>
+  <rect width="804" height="300" fill="url(#grid)" mask="url(#gridMask)"/>
+  <g fill="none" stroke="url(#silk)" stroke-width="1" stroke-linecap="round"><path class="draw" style="animation-delay:0.30s" pathLength="1000" stroke-opacity="0.08" d="M-20 268 C260 196 560 324 824 245"><animate attributeName="d" dur="16s" begin="-0.00s" repeatCount="indefinite" calcMode="spline" keyTimes="0.000;0.333;0.667;1.000" keySplines=".45 0 .55 1;.45 0 .55 1;.45 0 .55 1" values="M-20 268 C260 196 560 324 824 245;M-20 269 C260 317 560 206 824 279;M-20 263 C260 222 560 270 824 253;M-20 268 C260 196 560 324 824 245"/></path><path class="draw" style="animation-delay:0.37s" pathLength="1000" stroke-opacity="0.18" d="M-20 269.6 C260 202 560 318.8 824 246.8"><animate attributeName="d" dur="16s" begin="-0.22s" repeatCount="indefinite" calcMode="spline" keyTimes="0.000;0.333;0.667;1.000" keySplines=".45 0 .55 1;.45 0 .55 1;.45 0 .55 1" values="M-20 269.6 C260 202 560 318.8 824 246.8;M-20 267.6 C260 312 560 212 824 277.6;M-20 264.8 C260 226.4 560 274 824 251.2;M-20 269.6 C260 202 560 318.8 824 246.8"/></path><path class="draw" style="animation-delay:0.44s" pathLength="1000" stroke-opacity="0.29" d="M-20 271.2 C260 208 560 313.6 824 248.6"><animate attributeName="d" dur="16s" begin="-0.44s" repeatCount="indefinite" calcMode="spline" keyTimes="0.000;0.333;0.667;1.000" keySplines=".45 0 .55 1;.45 0 .55 1;.45 0 .55 1" values="M-20 271.2 C260 208 560 313.6 824 248.6;M-20 266.2 C260 307 560 218 824 276.2;M-20 266.6 C260 230.8 560 278 824 249.4;M-20 271.2 C260 208 560 313.6 824 248.6"/></path><path class="draw" style="animation-delay:0.51s" pathLength="1000" stroke-opacity="0.39" d="M-20 272.8 C260 214 560 308.4 824 250.4"><animate attributeName="d" dur="16s" begin="-0.66s" repeatCount="indefinite" calcMode="spline" keyTimes="0.000;0.333;0.667;1.000" keySplines=".45 0 .55 1;.45 0 .55 1;.45 0 .55 1" values="M-20 272.8 C260 214 560 308.4 824 250.4;M-20 264.8 C260 302 560 224 824 274.8;M-20 268.4 C260 235.2 560 282 824 247.6;M-20 272.8 C260 214 560 308.4 824 250.4"/></path><path class="draw" style="animation-delay:0.58s" pathLength="1000" stroke-opacity="0.50" d="M-20 274.4 C260 220 560 303.2 824 252.2"><animate attributeName="d" dur="16s" begin="-0.88s" repeatCount="indefinite" calcMode="spline" keyTimes="0.000;0.333;0.667;1.000" keySplines=".45 0 .55 1;.45 0 .55 1;.45 0 .55 1" values="M-20 274.4 C260 220 560 303.2 824 252.2;M-20 263.4 C260 297 560 230 824 273.4;M-20 270.2 C260 239.6 560 286 824 245.8;M-20 274.4 C260 220 560 303.2 824 252.2"/></path><path class="draw" style="animation-delay:0.65s" pathLength="1000" stroke-opacity="0.60" d="M-20 276 C260 226 560 298 824 254"><animate attributeName="d" dur="16s" begin="-1.10s" repeatCount="indefinite" calcMode="spline" keyTimes="0.000;0.333;0.667;1.000" keySplines=".45 0 .55 1;.45 0 .55 1;.45 0 .55 1" values="M-20 276 C260 226 560 298 824 254;M-20 262 C260 292 560 236 824 272;M-20 272 C260 244 560 290 824 244;M-20 276 C260 226 560 298 824 254"/></path><path class="draw" style="animation-delay:0.72s" pathLength="1000" stroke-opacity="0.50" d="M-20 277.6 C260 232 560 292.8 824 255.8"><animate attributeName="d" dur="16s" begin="-1.32s" repeatCount="indefinite" calcMode="spline" keyTimes="0.000;0.333;0.667;1.000" keySplines=".45 0 .55 1;.45 0 .55 1;.45 0 .55 1" values="M-20 277.6 C260 232 560 292.8 824 255.8;M-20 260.6 C260 287 560 242 824 270.6;M-20 273.8 C260 248.4 560 294 824 242.2;M-20 277.6 C260 232 560 292.8 824 255.8"/></path><path class="draw" style="animation-delay:0.79s" pathLength="1000" stroke-opacity="0.39" d="M-20 279.2 C260 238 560 287.6 824 257.6"><animate attributeName="d" dur="16s" begin="-1.54s" repeatCount="indefinite" calcMode="spline" keyTimes="0.000;0.333;0.667;1.000" keySplines=".45 0 .55 1;.45 0 .55 1;.45 0 .55 1" values="M-20 279.2 C260 238 560 287.6 824 257.6;M-20 259.2 C260 282 560 248 824 269.2;M-20 275.6 C260 252.8 560 298 824 240.4;M-20 279.2 C260 238 560 287.6 824 257.6"/></path><path class="draw" style="animation-delay:0.86s" pathLength="1000" stroke-opacity="0.29" d="M-20 280.8 C260 244 560 282.4 824 259.4"><animate attributeName="d" dur="16s" begin="-1.76s" repeatCount="indefinite" calcMode="spline" keyTimes="0.000;0.333;0.667;1.000" keySplines=".45 0 .55 1;.45 0 .55 1;.45 0 .55 1" values="M-20 280.8 C260 244 560 282.4 824 259.4;M-20 257.8 C260 277 560 254 824 267.8;M-20 277.4 C260 257.2 560 302 824 238.6;M-20 280.8 C260 244 560 282.4 824 259.4"/></path><path class="draw" style="animation-delay:0.93s" pathLength="1000" stroke-opacity="0.18" d="M-20 282.4 C260 250 560 277.2 824 261.2"><animate attributeName="d" dur="16s" begin="-1.98s" repeatCount="indefinite" calcMode="spline" keyTimes="0.000;0.333;0.667;1.000" keySplines=".45 0 .55 1;.45 0 .55 1;.45 0 .55 1" values="M-20 282.4 C260 250 560 277.2 824 261.2;M-20 256.4 C260 272 560 260 824 266.4;M-20 279.2 C260 261.6 560 306 824 236.8;M-20 282.4 C260 250 560 277.2 824 261.2"/></path><path class="draw" style="animation-delay:1.00s" pathLength="1000" stroke-opacity="0.08" d="M-20 284 C260 256 560 272 824 263"><animate attributeName="d" dur="16s" begin="-2.20s" repeatCount="indefinite" calcMode="spline" keyTimes="0.000;0.333;0.667;1.000" keySplines=".45 0 .55 1;.45 0 .55 1;.45 0 .55 1" values="M-20 284 C260 256 560 272 824 263;M-20 255 C260 267 560 266 824 265;M-20 281 C260 266 560 310 824 235;M-20 284 C260 256 560 272 824 263"/></path></g><g fill="none" stroke-linecap="round" filter="url(#glow)"><path pathLength="1000" stroke="#6EE7B7" stroke-width="1.4" stroke-opacity="0.35" stroke-dasharray="200 3000" stroke-dashoffset="200" d="M-20 276 C260 226 560 298 824 254"><animate attributeName="d" dur="16s" begin="-1.10s" repeatCount="indefinite" calcMode="spline" keyTimes="0.000;0.333;0.667;1.000" keySplines=".45 0 .55 1;.45 0 .55 1;.45 0 .55 1" values="M-20 276 C260 226 560 298 824 254;M-20 262 C260 292 560 236 824 272;M-20 272 C260 244 560 290 824 244;M-20 276 C260 226 560 298 824 254"/><animate attributeName="stroke-dashoffset" values="200;-1000" dur="8s" begin="5.8s" repeatCount="indefinite" calcMode="spline" keyTimes="0;1" keySplines=".5 0 .3 1"/></path><path pathLength="1000" stroke="#6EE7B7" stroke-width="2" stroke-opacity="1" stroke-dasharray="50 3000" stroke-dashoffset="50" d="M-20 276 C260 226 560 298 824 254"><animate attributeName="d" dur="16s" begin="-1.10s" repeatCount="indefinite" calcMode="spline" keyTimes="0.000;0.333;0.667;1.000" keySplines=".45 0 .55 1;.45 0 .55 1;.45 0 .55 1" values="M-20 276 C260 226 560 298 824 254;M-20 262 C260 292 560 236 824 272;M-20 272 C260 244 560 290 824 244;M-20 276 C260 226 560 298 824 254"/><animate attributeName="stroke-dashoffset" values="50;-1000" dur="8s" begin="5.8s" repeatCount="indefinite" calcMode="spline" keyTimes="0;1" keySplines=".5 0 .3 1"/></path></g>
+
+  <g class="in">
+    <rect x="343" y="44" width="118" height="28" rx="14" fill="#94A3B8" fill-opacity=".06" stroke="#94A3B8" stroke-opacity=".2"/>
+    <circle cx="361" cy="58" r="3.5" fill="#10B981"/>
+    <circle cx="361" cy="58" r="3.5" fill="none" stroke="#10B981" stroke-width="1.2">
+      <animate attributeName="r" values="3.5;9" dur="2.4s" repeatCount="indefinite"/>
+      <animate attributeName="stroke-opacity" values=".8;0" dur="2.4s" repeatCount="indefinite"/>
+    </circle>
+    <text class="mono" x="372" y="62" font-size="11" fill="#CBD5E1" letter-spacing="1">README.md</text>
+  </g>
+
+  <text class="sans in" style="animation-delay:.12s" x="402" y="160" text-anchor="middle" font-size="72" font-weight="700" letter-spacing="-2.2"><tspan fill="#F8FAFC">Hello, </tspan><tspan fill="url(#word)">World!</tspan></text>
+  <text class="mono in" style="animation-delay:.26s" x="402" y="204" text-anchor="middle" font-size="12" fill="#94A3B8" letter-spacing="3.6">WEB  ·  MOBILE  ·  APPLICATIONS</text>
+</g>
+<rect x=".5" y=".5" width="803" height="299" rx="19.5" fill="none" stroke="#94A3B8" stroke-opacity=".16"/>
+</svg>
