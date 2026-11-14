@@ -13,7 +13,6 @@
 
 <!-- ========================= GitHub Statistics ========================= -->
 <!-- 下の 3 枚は .github/workflows/profile-cards.yml が毎日自動生成します -->
-<h3 align="center">GitHub Statistics</h3>
 
 <p align="center">
   <img src="./assets/generated/stats.svg" width="400" alt="GitHub Stats" />
