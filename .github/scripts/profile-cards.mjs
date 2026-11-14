@@ -134,8 +134,71 @@ async function fetchData() {
   };
 }
 
+/* ------------------------------------------------------------------ motion helpers */
+// アニメーションは SVG 内の CSS と SMIL だけで完結します（README 側に JS / CSS は不要）。
+// SMIL は begin=0 から「待機 → 動作」を 1 本で表すので、非対応環境でも最終状態で表示されます。
+const EXPO = [0.16, 1, 0.3, 1]; // ease-out-expo
+const INOUT = [0.45, 0, 0.55, 1]; // ease-in-out
+let uid = 0;
+const nid = (p) => `${p}${++uid}`;
+
+function timed(delay, dur, bez = EXPO) {
+  const total = Math.max(delay, 0.01) + dur;
+  const k = (Math.max(delay, 0.01) / total).toFixed(4);
+  return `dur="${total.toFixed(2)}s" keyTimes="0;${k};1" keySplines="0 0 1 1;${bez.join(" ")}" calcMode="spline" fill="freeze"`;
+}
+
+// cubic-bezier で「進捗 p に到達する時刻（0..1）」を求める
+function timeAt(p, [x1, y1, x2, y2]) {
+  const B = (s, a, b) => 3 * (1 - s) ** 2 * s * a + 3 * (1 - s) * s ** 2 * b + s ** 3;
+  let lo = 0, hi = 1;
+  for (let i = 0; i < 40; i++) {
+    const m = (lo + hi) / 2;
+    if (B(m, y1, y2) < p) lo = m; else hi = m;
+  }
+  return B((lo + hi) / 2, x1, x2);
+}
+
+// 数字がスロットのように回転して最終値に止まるテキスト
+function roller(str, { x, y, size, fill, cls, weight = 400, cw, delay = 0, dur = 1.4, anchor = "start", mono = false }) {
+  const chars = [...String(str)];
+  const wOf = (c) => (mono || /\d/.test(c) ? cw : c === "." ? cw * 0.45 : cw * 0.95);
+  const total = chars.reduce((s, c) => s + wOf(c), 0);
+  let cx = anchor === "end" ? x - total : anchor === "middle" ? x - total / 2 : x;
+  const LH = Math.round(size * 1.4);
+  const attrs = `class="${cls}" font-size="${size}" font-weight="${weight}" fill="${fill}" text-anchor="middle"`;
+  const digits = chars.map((c, i) => (/\d/.test(c) ? i : -1)).filter((i) => i >= 0);
+  return chars
+    .map((c, i) => {
+      const w = wOf(c);
+      const mx = r1(cx + w / 2);
+      cx += w;
+      if (!/\d/.test(c)) {
+        return `<text ${attrs} x="${mx}" y="${y}">${esc(c)}<animate attributeName="opacity" values="0;0;1" ${timed(delay + dur * 0.4, 0.5)}/></text>`;
+      }
+      const order = digits.indexOf(i);
+      const N = 10 * (1 + order) + Number(c);
+      const id = nid("k-r");
+      let strip = "";
+      for (let k = 0; k <= N; k++) strip += `<text ${attrs} x="${mx}" y="${y + (N - k) * LH}">${k % 10}</text>`;
+      return `<clipPath id="${id}"><rect x="${r1(mx - w)}" y="${r1(y - size * 0.92)}" width="${r1(w * 2)}" height="${r1(size * 1.24)}"/></clipPath>` +
+        `<g clip-path="url(#${id})"><g>${strip}<animateTransform attributeName="transform" type="translate" values="0 ${-N * LH};0 ${-N * LH};0 0" ${timed(delay + order * 0.06, dur + order * 0.14)}/></g></g>`;
+    })
+    .join("\n");
+}
+
+// カードの枠線上をゆっくり周回する光（border beam）
+function beam(w, h, phase) {
+  const r = 13.5, a = 0.5, b = w - 0.5, c = h - 0.5;
+  const d = `M${a + r} ${a}H${b - r}A${r} ${r} 0 0 1 ${b} ${a + r}V${c - r}A${r} ${r} 0 0 1 ${b - r} ${c}H${a + r}A${r} ${r} 0 0 1 ${a} ${c - r}V${a + r}A${r} ${r} 0 0 1 ${a + r} ${a}Z`;
+  const seg = (len, width, op, off) =>
+    `<path d="${d}" pathLength="1" stroke="${C.mint}" stroke-width="${width}" stroke-opacity="${op}" stroke-dasharray="${len} ${r1((1 - len) * 1000) / 1000}" stroke-dashoffset="${off}">` +
+    `<animate attributeName="stroke-dashoffset" values="${off};${r1((off - 1) * 1000) / 1000}" dur="14s" begin="-${phase}s" repeatCount="indefinite"/></path>`;
+  return `<g class="k-beam" fill="none" stroke-linecap="round" filter="url(#k-beamGlow)">${seg(0.2, 1.2, 0.22, 0)}${seg(0.05, 1.5, 0.9, -0.15)}</g>`;
+}
+
 /* ------------------------------------------------------------------ card frame */
-function card({ w, h, title, meta, label, body, defs = "", css = "" }) {
+function card({ w, h, title, meta, label, body, defs = "", css = "", phase = 0 }) {
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" role="img" aria-label="${esc(label)}">
 <defs>
   <linearGradient id="k-hair" x1="0" y1="0" x2="1" y2="0">
@@ -148,14 +211,24 @@ function card({ w, h, title, meta, label, body, defs = "", css = "" }) {
     <stop offset="0" stop-color="${C.emerald}" stop-opacity=".11"/>
     <stop offset="1" stop-color="${C.emerald}" stop-opacity="0"/>
   </radialGradient>
+  <filter id="k-beamGlow" x="-5%" y="-5%" width="110%" height="110%">
+    <feGaussianBlur stdDeviation="1.6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
   <clipPath id="k-clip"><rect width="${w}" height="${h}" rx="14"/></clipPath>
   ${defs}
 </defs>
 <style>
   .k-sans{font-family:${SANS}}
   .k-mono{font-family:${MONO}}
-  .k-in{animation:k-in .8s cubic-bezier(.2,.8,.2,1) both}
-  @keyframes k-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .k-in{animation:k-in .9s cubic-bezier(.16,1,.3,1) both}
+  .k-slide{animation:k-slide .9s cubic-bezier(.16,1,.3,1) both}
+  .k-fade{animation:k-fade .8s ease both}
+  .k-draw{stroke-dasharray:1;animation:k-draw 1.3s cubic-bezier(.16,1,.3,1) both}
+  .k-beam{animation:k-fade 1.6s 1.6s ease both}
+  @keyframes k-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  @keyframes k-slide{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:none}}
+  @keyframes k-fade{from{opacity:0}to{opacity:1}}
+  @keyframes k-draw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
   ${css}
   @media (prefers-reduced-motion:reduce){*{animation:none!important}}
 </style>
@@ -165,7 +238,8 @@ function card({ w, h, title, meta, label, body, defs = "", css = "" }) {
   <rect x="${r1(w * 0.18)}" y="0" width="${r1(w * 0.64)}" height="1" fill="url(#k-hair)"/>
 </g>
 <rect x=".5" y=".5" width="${w - 1}" height="${h - 1}" rx="13.5" fill="none" stroke="${C.muted}" stroke-opacity=".16"/>
-<g class="k-mono" font-size="11" letter-spacing="1.6">
+${beam(w, h, phase)}
+<g class="k-mono k-slide" font-size="11" letter-spacing="1.6">
   <rect x="24" y="24.5" width="6" height="6" rx="1.5" fill="${C.emerald}"/>
   <text x="38" y="31" fill="${C.mint}">${esc(title)}</text>
   ${meta ? `<text x="${w - 24}" y="31" fill="${C.faint}" text-anchor="end" letter-spacing="1">${esc(meta)}</text>` : ""}
@@ -191,19 +265,20 @@ function statsCard({ login, stats }) {
   const cells = items
     .map(([label, value], i) => {
       const x = xs[i % 3], y = ys[Math.floor(i / 3)];
-      return `<g class="k-in" style="animation-delay:${(0.1 + i * 0.07).toFixed(2)}s">
-  <text class="k-sans" x="${x}" y="${y}" font-size="26" font-weight="700" fill="${C.text}" letter-spacing="-.5">${fmt(value)}</text>
+      const delay = 0.2 + i * 0.08;
+      return `${roller(fmt(value), { x, y, size: 26, weight: 700, fill: C.text, cls: "k-sans", cw: 15, delay })}
+<g class="k-slide" style="animation-delay:${(delay + 0.15).toFixed(2)}s">
   <rect x="${x}" y="${y + 13}" width="5" height="5" rx="1.2" fill="${ACCENTS[i % 3]}"/>
   <text class="k-mono" x="${x + 11}" y="${y + 18.5}" font-size="9.5" fill="${C.muted}" letter-spacing=".9">${label}</text>
 </g>`;
     })
     .join("\n");
   const grid = `<g stroke="${C.muted}" stroke-opacity=".09">
-  <line x1="24" y1="128" x2="376" y2="128"/>
-  <line x1="136" y1="64" x2="136" y2="184"/>
-  <line x1="260" y1="64" x2="260" y2="184"/>
+  <line class="k-draw" style="animation-delay:.1s" pathLength="1" x1="24" y1="128" x2="376" y2="128"/>
+  <line class="k-draw" style="animation-delay:.25s" pathLength="1" x1="136" y1="64" x2="136" y2="184"/>
+  <line class="k-draw" style="animation-delay:.35s" pathLength="1" x1="260" y1="64" x2="260" y2="184"/>
 </g>`;
-  return card({ w: W, h: H, title: "GITHUB STATS", meta: `@${login}`, label: "GitHub Stats", body: grid + cells });
+  return card({ w: W, h: H, title: "GITHUB STATS", meta: `@${login}`, label: "GitHub Stats", body: grid + cells, phase: 0 });
 }
 
 /* ------------------------------------------------------------------ languages */
@@ -221,12 +296,11 @@ function languagesCard({ languages }) {
     const segs = languages
       .map((l, i) => {
         const w = i === languages.length - 1 ? BX + BW - x : (BW * l.pct) / 100;
-        const s = `<rect class="k-grow" style="animation-delay:${(0.15 + i * 0.08).toFixed(2)}s" x="${r1(x)}" y="${BY}" width="${r1(Math.max(w, 0))}" height="${BH}" fill="${color(i)}" fill-opacity="${op(i)}"/>`;
+        const s = `<rect class="k-grow" style="animation-delay:${(0.2 + i * 0.1).toFixed(2)}s" x="${r1(x)}" y="${BY}" width="${r1(Math.max(w, 0))}" height="${BH}" fill="${color(i)}" fill-opacity="${op(i)}"/>`;
         x += w;
         return s;
       })
       .join("");
-    // セグメント間の細い区切り
     let acc = BX;
     const gaps = languages
       .slice(0, -1)
@@ -235,31 +309,40 @@ function languagesCard({ languages }) {
         return `<rect x="${r1(acc - 1)}" y="${BY}" width="2" height="${BH}" fill="${C.navy}"/>`;
       })
       .join("");
+    // バーの上を周期的に通り過ぎる光
+    const sheen = `<rect x="${BX}" y="${BY}" width="70" height="${BH}" fill="url(#k-sheen)" transform="translate(-90 0)">
+  <animateTransform attributeName="transform" type="translate" values="-90 0;${BW + 20} 0;${BW + 20} 0" keyTimes="0;.3;1" dur="6s" begin="1.8s" repeatCount="indefinite" calcMode="spline" keySplines=".45 0 .55 1;0 0 1 1"/>
+</rect>`;
     const rows = languages
       .map((l, i) => {
         const cx = i % 2 === 0 ? 24 : 212;
         const cy = 106 + Math.floor(i / 2) * 30;
-        return `<g class="k-in" style="animation-delay:${(0.3 + i * 0.06).toFixed(2)}s">
+        const delay = 0.45 + i * 0.08;
+        return `<g class="k-slide" style="animation-delay:${delay.toFixed(2)}s">
   <rect x="${cx}" y="${cy - 8}" width="8" height="8" rx="2" fill="${color(i)}" fill-opacity="${op(i)}"/>
   <text class="k-sans" x="${cx + 16}" y="${cy}" font-size="13" fill="${C.soft}">${esc(l.name)}</text>
-  <text class="k-mono" x="${cx + 164}" y="${cy}" font-size="11" fill="${C.muted}" text-anchor="end">${l.pct.toFixed(1)}%</text>
-</g>`;
+</g>
+${roller(`${l.pct.toFixed(1)}%`, { x: cx + 164, y: cy, size: 11, fill: C.muted, cls: "k-mono", cw: 6.6, mono: true, anchor: "end", delay: delay + 0.1, dur: 1.2 })}`;
       })
       .join("\n");
     body = `<clipPath id="k-bar"><rect x="${BX}" y="${BY}" width="${BW}" height="${BH}" rx="4"/></clipPath>
 <rect x="${BX}" y="${BY}" width="${BW}" height="${BH}" rx="4" fill="${C.muted}" fill-opacity=".1"/>
-<g clip-path="url(#k-bar)">${segs}${gaps}</g>
+<g clip-path="url(#k-bar)">${segs}${gaps}${sheen}</g>
 ${rows}`;
   }
   return card({
-    w: W, h: H, title: "TOP LANGUAGES", meta: "PUBLIC REPOS", label: "Top Languages", body,
-    css: `.k-grow{transform-box:fill-box;transform-origin:left;animation:k-grow 1s cubic-bezier(.2,.8,.2,1) both}
+    w: W, h: H, title: "TOP LANGUAGES", meta: "PUBLIC REPOS", label: "Top Languages", body, phase: 4.5,
+    defs: `<linearGradient id="k-sheen" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".55"/><stop offset="1" stop-color="#fff" stop-opacity="0"/>
+  </linearGradient>`,
+    css: `.k-grow{transform-box:fill-box;transform-origin:left;animation:k-grow 1.2s cubic-bezier(.16,1,.3,1) both}
   @keyframes k-grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}`,
   });
 }
 
 /* ------------------------------------------------------------------ activity */
-function monotonePath(p) {
+// 単調 3 次補間（値が 0 を下回るような行き過ぎが出ない曲線）
+function monotone(p) {
   const n = p.length;
   const dx = [], m = [];
   for (let i = 0; i < n - 1; i++) {
@@ -275,12 +358,25 @@ function monotonePath(p) {
     const a = t[i] / m[i], b = t[i + 1] / m[i], s = a * a + b * b;
     if (s > 9) { const k = 3 / Math.sqrt(s); t[i] = k * a * m[i]; t[i + 1] = k * b * m[i]; }
   }
-  let d = `M${r1(p[0][0])} ${r1(p[0][1])}`;
+  const segs = [];
   for (let i = 0; i < n - 1; i++) {
     const h = dx[i] / 3;
-    d += ` C${r1(p[i][0] + h)} ${r1(p[i][1] + t[i] * h)} ${r1(p[i + 1][0] - h)} ${r1(p[i + 1][1] - t[i + 1] * h)} ${r1(p[i + 1][0])} ${r1(p[i + 1][1])}`;
+    segs.push([p[i], [p[i][0] + h, p[i][1] + t[i] * h], [p[i + 1][0] - h, p[i + 1][1] - t[i + 1] * h], p[i + 1]].map(([x, y]) => [r1(x), r1(y)]));
   }
-  return d;
+  const d = `M${segs[0][0][0]} ${segs[0][0][1]}` + segs.map(([, c1, c2, e]) => ` C${c1[0]} ${c1[1]} ${c2[0]} ${c2[1]} ${e[0]} ${e[1]}`).join("");
+  return { d, segs };
+}
+
+function segLength([a, b, c, e]) {
+  let L = 0, px = a[0], py = a[1];
+  for (let k = 1; k <= 32; k++) {
+    const s = k / 32, u = 1 - s;
+    const x = u ** 3 * a[0] + 3 * u * u * s * b[0] + 3 * u * s * s * c[0] + s ** 3 * e[0];
+    const y = u ** 3 * a[1] + 3 * u * u * s * b[1] + 3 * u * s * s * c[1] + s ** 3 * e[1];
+    L += Math.hypot(x - px, y - py);
+    px = x; py = y;
+  }
+  return L;
 }
 
 function niceMax(v) {
@@ -296,18 +392,33 @@ const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "
 function activityCard({ days }) {
   const W = 804, H = 260;
   const X0 = 56, X1 = W - 28, Y0 = 70, Y1 = 206;
+  const RD = 0.4, RT = 2.4; // 描画開始までの待ち / 描画時間
   const vals = days.map((d) => d.contributionCount);
   const sum = vals.reduce((a, b) => a + b, 0);
-  const max = niceMax(Math.max(...vals, 0));
+  const vmax = Math.max(...vals, 0);
+  const max = niceMax(vmax);
   const pts = vals.map((v, i) => [X0 + (i * (X1 - X0)) / (vals.length - 1), Y1 - (v / max) * (Y1 - Y0)]);
-  const line = monotonePath(pts);
+  const { d: line, segs } = monotone(pts);
   const area = `${line} L${X1} ${Y1} L${X0} ${Y1} Z`;
+
+  // 左から右へ一定のイージングで描かれるよう、各点に到達する時刻と曲線上の位置を対応づける
+  const xfrac = pts.map(([x]) => (x - X0) / (X1 - X0));
+  const tAt = xfrac.map((f) => timeAt(f, INOUT));
+  const lens = segs.map(segLength);
+  const totalLen = lens.reduce((a, b) => a + b, 0);
+  let acc = 0;
+  const lenFrac = [0, ...lens.map((l) => (acc += l) / totalLen)];
+  const keyTimes = tAt.map((t, i) => (i === 0 ? 0 : i === tAt.length - 1 ? 1 : t).toFixed(4)).join(";");
+  const keyPoints = lenFrac.map((f, i) => (i === lenFrac.length - 1 ? 1 : f).toFixed(4)).join(";");
 
   const grid = [0, 1, 2, 3, 4]
     .map((k) => {
-      const y = Y1 - (k * (Y1 - Y0)) / 4;
-      return `<line x1="${X0}" y1="${r1(y)}" x2="${X1}" y2="${r1(y)}" stroke="${C.muted}" stroke-opacity="${k === 0 ? 0.18 : 0.08}" ${k === 0 ? "" : 'stroke-dasharray="2 5"'}/>
-<text x="${X0 - 12}" y="${r1(y + 3.5)}" text-anchor="end">${fmt((max * k) / 4)}</text>`;
+      const y = r1(Y1 - (k * (Y1 - Y0)) / 4);
+      const lineEl = k === 0
+        ? `<line class="k-draw" style="animation-delay:.1s" pathLength="1" x1="${X0}" y1="${y}" x2="${X1}" y2="${y}" stroke="${C.muted}" stroke-opacity=".18"/>`
+        : `<line class="k-fade" style="animation-delay:${(0.15 + k * 0.08).toFixed(2)}s" x1="${X0}" y1="${y}" x2="${X1}" y2="${y}" stroke="${C.muted}" stroke-opacity=".08" stroke-dasharray="2 5"/>`;
+      return `${lineEl}
+<text class="k-fade" style="animation-delay:${(0.2 + k * 0.08).toFixed(2)}s" x="${X0 - 12}" y="${r1(y + 3.5)}" text-anchor="end">${fmt((max * k) / 4)}</text>`;
     })
     .join("\n");
   const xl = days
@@ -315,37 +426,68 @@ function activityCard({ days }) {
       if (i % 5 !== 0 && i !== days.length - 1) return "";
       if (i === days.length - 1 && i % 5 !== 0 && i % 5 < 3) return "";
       const [, mm, dd] = d.date.split("-").map(Number);
-      return `<text x="${r1(pts[i][0])}" y="${Y1 + 24}" text-anchor="middle">${MONTHS[mm - 1]} ${dd}</text>`;
+      return `<text class="k-fade" style="animation-delay:${(RD + RT * tAt[i]).toFixed(2)}s" x="${r1(pts[i][0])}" y="${Y1 + 24}" text-anchor="middle">${MONTHS[mm - 1]} ${dd}</text>`;
     })
     .join("");
+
+  // ピークのラベル（描画ヘッドが通過したタイミングで出現）
+  let peak = "";
+  if (vmax > 0) {
+    const pi = vals.indexOf(vmax);
+    const [px, py] = pts[pi];
+    const at = (RD + RT * tAt[pi]).toFixed(2);
+    peak = `<g class="k-in" style="animation-delay:${at}s">
+  <circle cx="${r1(px)}" cy="${r1(py)}" r="3" fill="${C.navy}" stroke="${C.mint}" stroke-width="1.4"/>
+  <text class="k-mono" x="${r1(px)}" y="${r1(py - 11)}" text-anchor="middle" font-size="10" fill="${C.mint}">${vmax}</text>
+</g>`;
+  }
   const [lx, ly] = pts[pts.length - 1];
+  const RW = X1 - X0 + 12;
 
   const body = `<g class="k-mono" font-size="10" fill="${C.faint}">
 ${grid}
 ${xl}
 </g>
-<path class="k-area" d="${area}" fill="url(#k-areaG)"/>
-<path class="k-line" d="${line}" pathLength="1" fill="none" stroke="url(#k-lineG)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-<g class="k-dot">
+<g clip-path="url(#k-reveal)">
+  <path d="${area}" fill="url(#k-areaG)"/>
+  <path d="${line}" fill="none" stroke="url(#k-lineG)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+<g fill="none" stroke-linecap="round" filter="url(#k-glowF)">
+  <path d="${line}" pathLength="1" stroke="${C.mint}" stroke-width="2.2" stroke-opacity=".3" stroke-dasharray=".18 2" stroke-dashoffset=".18">
+    <animate attributeName="stroke-dashoffset" values=".18;-1;-1" keyTimes="0;.55;1" dur="6s" begin="${(RD + RT + 1).toFixed(1)}s" repeatCount="indefinite" calcMode="spline" keySplines=".45 0 .55 1;0 0 1 1"/>
+  </path>
+  <path d="${line}" pathLength="1" stroke="${C.text}" stroke-width="2.2" stroke-dasharray=".04 2" stroke-dashoffset=".04">
+    <animate attributeName="stroke-dashoffset" values=".04;-1.14;-1.14" keyTimes="0;.55;1" dur="6s" begin="${(RD + RT + 1).toFixed(1)}s" repeatCount="indefinite" calcMode="spline" keySplines=".45 0 .55 1;0 0 1 1"/>
+  </path>
+</g>
+${peak}
+<g opacity="0" filter="url(#k-glowF)">
+  <circle r="7" fill="${C.mint}" fill-opacity=".25"/>
+  <circle r="2.6" fill="${C.text}"/>
+  <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;.05;.9;1" dur="${RT}s" begin="${RD}s" fill="freeze"/>
+  <animateMotion dur="${RT}s" begin="${RD}s" fill="freeze" calcMode="linear" keyTimes="${keyTimes}" keyPoints="${keyPoints}" path="${line}"/>
+</g>
+<g class="k-fade" style="animation-delay:${(RD + RT - 0.15).toFixed(2)}s">
   <circle cx="${r1(lx)}" cy="${r1(ly)}" r="4" fill="none" stroke="${C.cyan}" stroke-width="1.5">
-    <animate attributeName="r" values="4;12" dur="2.4s" begin="2s" repeatCount="indefinite"/>
-    <animate attributeName="stroke-opacity" values=".7;0" dur="2.4s" begin="2s" repeatCount="indefinite"/>
+    <animate attributeName="r" values="4;12" dur="2.4s" begin="${(RD + RT).toFixed(1)}s" repeatCount="indefinite"/>
+    <animate attributeName="stroke-opacity" values=".7;0" dur="2.4s" begin="${(RD + RT).toFixed(1)}s" repeatCount="indefinite"/>
   </circle>
   <circle cx="${r1(lx)}" cy="${r1(ly)}" r="3.5" fill="${C.cyan}"/>
 </g>`;
   return card({
-    w: W, h: H, title: "CONTRIBUTION ACTIVITY", meta: `LAST 30 DAYS · ${sum} CONTRIBUTIONS`, label: "GitHub Activity Graph", body,
+    w: W, h: H, title: "CONTRIBUTION ACTIVITY", meta: `LAST 30 DAYS · ${sum} CONTRIBUTIONS`, label: "GitHub Activity Graph", body, phase: 9,
     defs: `<linearGradient id="k-lineG" gradientUnits="userSpaceOnUse" x1="${X0}" y1="0" x2="${X1}" y2="0">
     <stop offset="0" stop-color="${C.emerald}"/><stop offset=".6" stop-color="${C.cyan}"/><stop offset="1" stop-color="${C.mint}"/>
   </linearGradient>
   <linearGradient id="k-areaG" x1="0" y1="0" x2="0" y2="1">
     <stop offset="0" stop-color="${C.emerald}" stop-opacity=".28"/><stop offset="1" stop-color="${C.emerald}" stop-opacity="0"/>
-  </linearGradient>`,
-    css: `.k-line{stroke-dasharray:1;animation:k-draw 1.8s .2s cubic-bezier(.65,0,.35,1) both}
-  .k-area{animation:k-fade 1.2s .9s ease both}
-  .k-dot{animation:k-fade .6s 1.8s ease both}
-  @keyframes k-draw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
-  @keyframes k-fade{from{opacity:0}to{opacity:1}}`,
+  </linearGradient>
+  <clipPath id="k-reveal"><rect x="${X0 - 8}" y="0" width="${RW}" height="${H}">
+    <animate attributeName="width" values="12;12;${RW}" ${timed(RD, RT, INOUT)}/>
+  </rect></clipPath>
+  <filter id="k-glowF" x="-50%" y="-50%" width="200%" height="200%">
+    <feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>`,
   });
 }
 
