@@ -42,7 +42,7 @@
   <text class="k-mono" x="35" y="112.5" font-size="9.5" fill="#94A3B8" letter-spacing=".9">TOTAL STARS</text>
 </g>
 <g class="k-in" style="animation-delay:0.17s">
-  <text class="k-sans" x="148" y="94" font-size="26" font-weight="700" fill="#F8FAFC" letter-spacing="-.5">329</text>
+  <text class="k-sans" x="148" y="94" font-size="26" font-weight="700" fill="#F8FAFC" letter-spacing="-.5">330</text>
   <rect x="148" y="107" width="5" height="5" rx="1.2" fill="#38BDF8"/>
   <text class="k-mono" x="159" y="112.5" font-size="9.5" fill="#94A3B8" letter-spacing=".9">COMMITS · 1Y</text>
 </g>
@@ -57,7 +57,7 @@
   <text class="k-mono" x="35" y="178.5" font-size="9.5" fill="#94A3B8" letter-spacing=".9">ISSUES</text>
 </g>
 <g class="k-in" style="animation-delay:0.38s">
-  <text class="k-sans" x="148" y="160" font-size="26" font-weight="700" fill="#F8FAFC" letter-spacing="-.5">407</text>
+  <text class="k-sans" x="148" y="160" font-size="26" font-weight="700" fill="#F8FAFC" letter-spacing="-.5">408</text>
   <rect x="148" y="173" width="5" height="5" rx="1.2" fill="#38BDF8"/>
   <text class="k-mono" x="159" y="178.5" font-size="9.5" fill="#94A3B8" letter-spacing=".9">CONTRIBS · 1Y</text>
 </g>

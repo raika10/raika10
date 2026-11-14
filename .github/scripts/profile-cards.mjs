@@ -6,6 +6,7 @@
  *   assets/generated/stats.svg      … GitHub Stats
  *   assets/generated/languages.svg  … Top Languages
  *   assets/generated/activity.svg   … Activity Graph（直近 30 日）
+ *   assets/generated/overview.svg   … Activity Overview（直近 1 年・公開リポジトリのみ）
  *
  * 環境変数
  *   GITHUB_TOKEN   必須。Actions では secrets.GITHUB_TOKEN をそのまま渡せます
@@ -132,6 +133,44 @@ async function fetchData() {
     languages,
     days: days.slice(-30),
   };
+}
+
+// Activity Overview 用：直近 1 年の活動を「公開リポジトリだけ」で集計（非公開リポジトリ名を出さないため）
+async function fetchOverview() {
+  const part = `repository{ nameWithOwner isPrivate } contributions{ totalCount }`;
+  const { user } = await gql(
+    `query($login:String!){
+      user(login:$login){
+        contributionsCollection{
+          commitContributionsByRepository(maxRepositories:100){ ${part} }
+          issueContributionsByRepository(maxRepositories:100){ ${part} }
+          pullRequestContributionsByRepository(maxRepositories:100){ ${part} }
+          pullRequestReviewContributionsByRepository(maxRepositories:100){ ${part} }
+        }
+      }
+    }`,
+    { login: USER },
+  );
+  const cc = user.contributionsCollection;
+  const kinds = {
+    commits: cc.commitContributionsByRepository,
+    issues: cc.issueContributionsByRepository,
+    prs: cc.pullRequestContributionsByRepository,
+    reviews: cc.pullRequestReviewContributionsByRepository,
+  };
+  const counts = {};
+  const perRepo = new Map();
+  for (const [k, rows] of Object.entries(kinds)) {
+    counts[k] = 0;
+    for (const r of rows) {
+      if (r.repository.isPrivate) continue;
+      const n = r.contributions.totalCount;
+      counts[k] += n;
+      perRepo.set(r.repository.nameWithOwner, (perRepo.get(r.repository.nameWithOwner) || 0) + n);
+    }
+  }
+  const repos = [...perRepo.entries()].sort((a, b) => b[1] - a[1]);
+  return { counts, repos };
 }
 
 /* ------------------------------------------------------------------ card frame */
@@ -349,6 +388,126 @@ ${xl}
   });
 }
 
+/* ------------------------------------------------------------------ activity overview */
+function overviewCard({ counts, repos }) {
+  const W = 804, H = 316;
+  const DIV = 430; // 左右を分ける縦線
+  const total = counts.commits + counts.issues + counts.prs + counts.reviews;
+  const frac = (n) => (total ? n / total : 0);
+  const pctLabel = (n) => {
+    const p = Math.round(frac(n) * 100);
+    return n > 0 && p === 0 ? "<1%" : `${p}%`;
+  };
+
+  /* ---- left: summary ---- */
+  const shown = repos.slice(0, 3);
+  const others = repos.length - shown.length;
+  const short = (s, max) => (s.length > max ? `${s.slice(0, max - 1)}…` : s);
+  const repoRows = shown.length
+    ? shown
+        .map(([full, n], i) => {
+          const y = 98 + i * 22;
+          const [owner, name] = full.split("/");
+          return `<g class="k-in" style="animation-delay:${(0.12 + i * 0.06).toFixed(2)}s">
+  <rect x="24" y="${y - 7}" width="4" height="4" rx="1" fill="${C.emerald}"/>
+  <text class="k-sans" x="38" y="${y}" font-size="13"><tspan fill="${C.faint}">${esc(short(owner, 22))} / </tspan><tspan fill="${C.soft}">${esc(short(name, 26))}</tspan></text>
+  <text class="k-mono" x="${DIV - 24}" y="${y}" font-size="10.5" fill="${C.muted}" text-anchor="end">${fmt(n)}</text>
+</g>`;
+        })
+        .join("\n")
+    : `<text class="k-sans k-in" x="24" y="98" font-size="13" fill="${C.faint}">No public activity in the last year</text>`;
+  const more = others > 0
+    ? `<text class="k-sans k-in" style="animation-delay:.3s" x="24" y="${98 + shown.length * 22}" font-size="12" fill="${C.muted}">and ${others} other ${others === 1 ? "repository" : "repositories"}</text>`
+    : "";
+
+  const metrics = [
+    ["COMMITS", counts.commits, C.emerald],
+    ["PULL REQUESTS", counts.prs, C.cyan],
+    ["ISSUES", counts.issues, C.mint],
+    ["CODE REVIEWS", counts.reviews, C.emerald],
+  ];
+  const grid = metrics
+    .map(([label, v, color], i) => {
+      const x = i % 2 === 0 ? 24 : 224;
+      const y = i < 2 ? 222 : 270;
+      return `<g class="k-in" style="animation-delay:${(0.35 + i * 0.07).toFixed(2)}s">
+  <text class="k-sans" x="${x}" y="${y}" font-size="20" font-weight="700" fill="${C.text}" letter-spacing="-.4">${fmt(v)}</text>
+  <rect x="${x}" y="${y + 11}" width="5" height="5" rx="1.2" fill="${color}"/>
+  <text class="k-mono" x="${x + 11}" y="${y + 16.5}" font-size="9.5" fill="${C.muted}" letter-spacing=".9">${label}</text>
+</g>`;
+    })
+    .join("\n");
+
+  const left = `<text class="k-mono k-in" x="24" y="72" font-size="10" fill="${C.faint}" letter-spacing="1.2">CONTRIBUTED TO</text>
+${repoRows}
+${more}
+<line x1="24" y1="190" x2="${DIV - 24}" y2="190" stroke="${C.muted}" stroke-opacity=".09"/>
+${grid}`;
+
+  /* ---- right: cross chart ---- */
+  const CX = Math.round((DIV + W) / 2), CY = 180, LX = 104, LY = 64;
+  const axes = {
+    reviews: { dx: 0, dy: -1, L: LY, name: "Code reviews" },
+    commits: { dx: -1, dy: 0, L: LX, name: "Commits" },
+    issues: { dx: 1, dy: 0, L: LX, name: "Issues" },
+    prs: { dx: 0, dy: 1, L: LY, name: "Pull requests" },
+  };
+  const pts = {};
+  for (const [k, a] of Object.entries(axes)) {
+    const r = a.L * frac(counts[k]);
+    pts[k] = [r1(CX + a.dx * r), r1(CY + a.dy * r)];
+  }
+  const poly = ["reviews", "issues", "prs", "commits"].map((k) => pts[k].join(",")).join(" ");
+  const segs = Object.keys(axes)
+    .map((k, i) => {
+      const [x, y] = pts[k];
+      if (x === CX && y === CY) return "";
+      return `<line class="k-seg" style="animation-delay:${(0.4 + i * 0.1).toFixed(2)}s" pathLength="1" x1="${CX}" y1="${CY}" x2="${x}" y2="${y}" stroke="${C.emerald}" stroke-width="2.5" stroke-linecap="round"/>`;
+    })
+    .join("\n");
+  const dots = Object.keys(axes)
+    .map((k, i) => {
+      const [x, y] = pts[k];
+      return `<circle class="k-pop" style="animation-delay:${(0.9 + i * 0.08).toFixed(2)}s" cx="${x}" cy="${y}" r="3.5" fill="${C.navy}" stroke="${C.mint}" stroke-width="1.6"/>`;
+    })
+    .join("\n");
+  const label = (k) => {
+    const a = axes[k];
+    const pc = counts[k] > 0 ? C.text : C.faint;
+    const P = (x, y, anchor) => `<text class="k-sans" x="${x}" y="${y}" font-size="15" font-weight="700" fill="${pc}" text-anchor="${anchor}">${esc(pctLabel(counts[k]))}</text>`;
+    const N = (x, y, anchor) => `<text class="k-mono" x="${x}" y="${y}" font-size="9.5" fill="${C.muted}" letter-spacing=".9" text-anchor="${anchor}">${a.name.toUpperCase()}</text>`;
+    if (k === "reviews") return P(CX, CY - LY - 30, "middle") + N(CX, CY - LY - 15, "middle");
+    if (k === "prs") return P(CX, CY + LY + 26, "middle") + N(CX, CY + LY + 41, "middle");
+    if (k === "commits") return P(CX - LX - 14, CY - 3, "end") + N(CX - LX - 14, CY + 12, "end");
+    return P(CX + LX + 14, CY - 3, "start") + N(CX + LX + 14, CY + 12, "start");
+  };
+  const right = `<g stroke="${C.muted}" stroke-opacity=".22">
+  <line x1="${CX - LX}" y1="${CY}" x2="${CX + LX}" y2="${CY}"/>
+  <line x1="${CX}" y1="${CY - LY}" x2="${CX}" y2="${CY + LY}"/>
+</g>
+<g fill="${C.muted}" fill-opacity=".35">
+  <circle cx="${CX - LX}" cy="${CY}" r="1.6"/><circle cx="${CX + LX}" cy="${CY}" r="1.6"/>
+  <circle cx="${CX}" cy="${CY - LY}" r="1.6"/><circle cx="${CX}" cy="${CY + LY}" r="1.6"/>
+</g>
+${total ? `<polygon class="k-area" points="${poly}" fill="${C.emerald}" fill-opacity=".1"/>` : ""}
+${segs}
+${dots}
+<g class="k-in" style="animation-delay:.2s">${Object.keys(axes).map(label).join("\n")}</g>`;
+
+  const body = `<line x1="${DIV}" y1="56" x2="${DIV}" y2="${H - 24}" stroke="${C.muted}" stroke-opacity=".14"/>
+${left}
+${right}`;
+  return card({
+    w: W, h: H, title: "ACTIVITY OVERVIEW", meta: "LAST 12 MONTHS · PUBLIC REPOS", label: "Activity Overview", body,
+    css: `.k-seg{stroke-dasharray:1;animation:k-seg 1s cubic-bezier(.2,.8,.2,1) both}
+  .k-pop{transform-box:fill-box;transform-origin:center;animation:k-pop .5s cubic-bezier(.34,1.56,.64,1) both}
+  .k-area{animation:k-fade 1s 1s ease both}
+  @keyframes k-seg{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+  @keyframes k-pop{from{opacity:0;transform:scale(0)}to{opacity:1;transform:scale(1)}}
+  @keyframes k-fade{from{opacity:0}to{opacity:1}}`,
+  });
+}
+
 /* ------------------------------------------------------------------ main */
 const data = await fetchData();
 await mkdir(OUT_DIR, { recursive: true });
@@ -357,5 +516,6 @@ const out = (f) => path.join(OUT_DIR, f);
 await writeFile(out("stats.svg"), statsCard(data));
 await writeFile(out("languages.svg"), languagesCard(data));
 await writeFile(out("activity.svg"), activityCard(data));
+await writeFile(out("overview.svg"), overviewCard(await fetchOverview()));
 
 console.log(`Generated cards for @${data.login} → ${OUT_DIR}`);

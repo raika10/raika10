@@ -12,7 +12,7 @@
 <br />
 
 <!-- ========================= GitHub Statistics ========================= -->
-<!-- 下の 3 枚は .github/workflows/profile-cards.yml が毎日自動生成します -->
+<!-- 下の 4 枚は .github/workflows/profile-cards.yml が毎日自動生成します -->
 <h3 align="center">GitHub Statistics</h3>
 
 <p align="center">
@@ -22,6 +22,10 @@
 
 <p align="center">
   <img src="./assets/generated/activity.svg" width="804" alt="GitHub Activity Graph" />
+</p>
+
+<p align="center">
+  <img src="./assets/generated/overview.svg" width="804" alt="Activity Overview" />
 </p>
 
 <!-- ============================== Connect ==============================
