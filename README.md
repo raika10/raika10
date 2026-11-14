@@ -1,6 +1,6 @@
 <!-- ============================== Header ============================== -->
 <p align="center">
-  <img src="./assets/banner-v5.svg" width="804" alt="Hello, World!" />
+  <img src="./assets/banner-v6.svg" width="804" alt="Hello, World!" />
 </p>
 
 <p align="center">

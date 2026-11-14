@@ -2,17 +2,47 @@
 <defs>
   <clipPath id="slit"><rect x="0" y="86" width="804" height="100"/></clipPath>
   <clipPath id="clip"><rect width="804" height="300" rx="20"/></clipPath>
-  <!-- インク：ノイズで輪郭をゆがめ、少しぼかして水中に広がるにじみにする -->
-  <filter id="ink" x="-10%" y="-20%" width="120%" height="140%" color-interpolation-filters="sRGB">
-    <feTurbulence type="fractalNoise" baseFrequency="0.011 0.02" numOctaves="4" seed="11" result="noise"/>
-    <feDisplacementMap in="SourceGraphic" in2="noise" scale="135" xChannelSelector="R" yChannelSelector="G" result="warp"/>
-    <feGaussianBlur in="warp" stdDeviation="1.6"/>
+  <!-- 水中の絵の具（マーブリング）
+       絵の具の帯（グラデーションの縞）を、ゆったりした大きなうず（低周波ノイズ）でゆがめる。
+       うずは固定で、その中を帯が流れ続けるので、絵の具が水中でかき混ぜられているように見える。
+       A：エメラルド〜ティール〜ミントの帯が横へ流れる / B：シアンの帯が縦へ流れる → 交わって溶け合う -->
+  <linearGradient id="paintA" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="420" y2="0" spreadMethod="repeat">
+    <stop offset="0" stop-color="#0B1220"/>
+    <stop offset=".12" stop-color="#0E7490" stop-opacity=".85"/>
+    <stop offset=".24" stop-color="#10B981"/>
+    <stop offset=".31" stop-color="#6EE7B7" stop-opacity=".9"/>
+    <stop offset=".38" stop-color="#10B981"/>
+    <stop offset=".52" stop-color="#0B1220"/>
+    <stop offset=".68" stop-color="#0B1220"/>
+    <stop offset=".8" stop-color="#0E7490" stop-opacity=".75"/>
+    <stop offset=".9" stop-color="#10B981" stop-opacity=".55"/>
+    <stop offset="1" stop-color="#0B1220"/>
+  </linearGradient>
+  <linearGradient id="paintB" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="260" spreadMethod="repeat">
+    <stop offset="0" stop-color="#38BDF8" stop-opacity="0"/>
+    <stop offset=".3" stop-color="#38BDF8" stop-opacity="0"/>
+    <stop offset=".44" stop-color="#38BDF8" stop-opacity=".6"/>
+    <stop offset=".5" stop-color="#6EE7B7" stop-opacity=".55"/>
+    <stop offset=".58" stop-color="#38BDF8" stop-opacity=".35"/>
+    <stop offset=".75" stop-color="#38BDF8" stop-opacity="0"/>
+    <stop offset="1" stop-color="#38BDF8" stop-opacity="0"/>
+  </linearGradient>
+  <filter id="marbleA" filterUnits="userSpaceOnUse" x="0" y="0" width="804" height="300" color-interpolation-filters="sRGB">
+    <feTurbulence type="fractalNoise" baseFrequency="0.0032 0.0055" numOctaves="2" seed="4" result="noise"/>
+    <feDisplacementMap in="SourceGraphic" in2="noise" scale="230" xChannelSelector="R" yChannelSelector="G" result="warp"/>
+    <feGaussianBlur in="warp" stdDeviation="5"/>
   </filter>
-  <radialGradient id="inkE"><stop offset="0" stop-color="#10B981" stop-opacity=".62"/><stop offset=".55" stop-color="#10B981" stop-opacity=".22"/><stop offset="1" stop-color="#10B981" stop-opacity="0"/></radialGradient>
-  <radialGradient id="inkC"><stop offset="0" stop-color="#38BDF8" stop-opacity=".58"/><stop offset=".55" stop-color="#38BDF8" stop-opacity=".2"/><stop offset="1" stop-color="#38BDF8" stop-opacity="0"/></radialGradient>
-  <radialGradient id="inkM"><stop offset="0" stop-color="#6EE7B7" stop-opacity=".5"/><stop offset=".6" stop-color="#6EE7B7" stop-opacity=".14"/><stop offset="1" stop-color="#6EE7B7" stop-opacity="0"/></radialGradient>
-  <radialGradient id="inkD"><stop offset="0" stop-color="#0E7490" stop-opacity=".55"/><stop offset=".6" stop-color="#0E7490" stop-opacity=".18"/><stop offset="1" stop-color="#0E7490" stop-opacity="0"/></radialGradient>
-  <radialGradient id="calm"><stop offset="0" stop-color="#0B1220" stop-opacity=".55"/><stop offset="1" stop-color="#0B1220" stop-opacity="0"/></radialGradient>
+  <filter id="marbleB" filterUnits="userSpaceOnUse" x="0" y="0" width="804" height="300" color-interpolation-filters="sRGB">
+    <feTurbulence type="fractalNoise" baseFrequency="0.0045 0.0038" numOctaves="2" seed="9" result="noise"/>
+    <feDisplacementMap in="SourceGraphic" in2="noise" scale="190" xChannelSelector="G" yChannelSelector="R" result="warp"/>
+    <feGaussianBlur in="warp" stdDeviation="4"/>
+  </filter>
+  <!-- 縁を暗く沈めて、水の奥行きを出す -->
+  <radialGradient id="depth" cx=".5" cy=".45" r=".75">
+    <stop offset=".55" stop-color="#0B1220" stop-opacity="0"/>
+    <stop offset="1" stop-color="#0B1220" stop-opacity=".85"/>
+  </radialGradient>
+  <radialGradient id="calm"><stop offset="0" stop-color="#0B1220" stop-opacity=".78"/><stop offset=".6" stop-color="#0B1220" stop-opacity=".45"/><stop offset="1" stop-color="#0B1220" stop-opacity="0"/></radialGradient>
   <radialGradient id="fade" cx=".5" cy=".42" r=".6">
     <stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/>
   </radialGradient>
@@ -61,14 +91,12 @@
   @keyframes cutbar{from{transform:scaleX(0)}to{transform:scaleX(1)}}
   @keyframes cutfade{to{opacity:0}}
   @keyframes spark{0%{opacity:0;transform:translateX(0)}12%{opacity:1}85%{opacity:1}100%{opacity:0;transform:translateX(534.7px)}}
-  .inkIn{animation:inkIn 2.4s ease-out both}
-  .inkA{transform-origin:240px 150px;animation:inkA 17s ease-in-out infinite alternate}
-  .inkB{transform-origin:570px 150px;animation:inkB 21s ease-in-out infinite alternate}
-  .inkM{transform-origin:402px 150px;animation:inkM 12s ease-in-out infinite alternate}
-  @keyframes inkIn{from{opacity:.35}to{opacity:1}}
-  @keyframes inkA{0%{transform:translate(-50px,12px) rotate(-10deg) scale(.92)}50%{transform:translate(40px,-16px) rotate(8deg) scale(1.08)}100%{transform:translate(100px,10px) rotate(18deg) scale(1)}}
-  @keyframes inkB{0%{transform:translate(50px,-10px) rotate(8deg) scale(1)}50%{transform:translate(-50px,16px) rotate(-10deg) scale(1.1)}100%{transform:translate(-110px,-8px) rotate(-20deg) scale(.94)}}
-  @keyframes inkM{0%{transform:rotate(-20deg) scale(.75);opacity:.45}100%{transform:rotate(45deg) scale(1.3);opacity:1}}
+  .paintIn{animation:paintIn 2.4s ease-out both}
+  .flowA{animation:flowA 28s linear infinite}
+  .flowB{animation:flowB 21s linear infinite}
+  @keyframes paintIn{from{opacity:.2}to{opacity:.72}}
+  @keyframes flowA{from{transform:translateX(0)}to{transform:translateX(420px)}}
+  @keyframes flowB{from{transform:translateY(0)}to{transform:translateY(260px)}}
   @keyframes in{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:none}}
   @keyframes rise{from{transform:translateY(14px)}to{transform:none}}
   @keyframes track{from{opacity:0;letter-spacing:12px}to{opacity:1;letter-spacing:3.6px}}
@@ -80,27 +108,18 @@
 
 <g clip-path="url(#clip)">
   <rect width="804" height="300" fill="#0B1220"/>
-  <!-- インク：左からエメラルド、右からシアンが漂って中央で重なり、ミントに混ざる。
-       フィルター（ノイズによるゆがみ）は親グループに固定してあり、中のインクが動くことで
-       輪郭のゆがみ方が刻々と変わり、水に落としたインクのように見える -->
-  <g filter="url(#ink)" class="inkIn">
-    <g class="inkA">
-      <ellipse cx="240" cy="150" rx="215" ry="100" fill="url(#inkE)"/>
-      <ellipse cx="150" cy="80" rx="125" ry="62" fill="url(#inkE)"/>
-      <ellipse cx="320" cy="222" rx="135" ry="56" fill="url(#inkD)"/>
+  <!-- 水中の絵の具：2 つの流れがうずの中で交わり、溶け合う -->
+  <g class="paintIn">
+    <g filter="url(#marbleA)">
+      <rect class="flowA" x="-560" y="-140" width="1924" height="580" fill="url(#paintA)"/>
     </g>
-    <g class="inkB" style="mix-blend-mode:screen">
-      <ellipse cx="570" cy="150" rx="225" ry="102" fill="url(#inkC)"/>
-      <ellipse cx="660" cy="220" rx="135" ry="60" fill="url(#inkC)"/>
-      <ellipse cx="500" cy="78" rx="125" ry="56" fill="url(#inkD)"/>
-    </g>
-    <g class="inkM" style="mix-blend-mode:screen">
-      <ellipse cx="402" cy="150" rx="130" ry="72" fill="url(#inkM)"/>
-      <ellipse cx="460" cy="120" rx="70" ry="40" fill="url(#inkM)"/>
+    <g filter="url(#marbleB)" style="mix-blend-mode:screen">
+      <rect class="flowB" x="-140" y="-420" width="1084" height="1140" fill="url(#paintB)"/>
     </g>
   </g>
+  <rect width="804" height="300" fill="url(#depth)"/>
   <!-- 見出しの真後ろだけインクを少し沈めて、文字を読みやすくする -->
-  <ellipse cx="402" cy="146" rx="250" ry="62" fill="url(#calm)"/>
+  <ellipse cx="402" cy="160" rx="300" ry="82" fill="url(#calm)"/>
   <g fill="none" stroke="url(#silk)" stroke-width="1" stroke-linecap="round"><path class="draw" style="animation-delay:0.30s" pathLength="1000" stroke-opacity="0.08" d="M-20 268 C260 196 560 324 824 245"><animate attributeName="d" dur="16s" begin="-0.00s" repeatCount="indefinite" calcMode="spline" keyTimes="0.000;0.333;0.667;1.000" keySplines=".45 0 .55 1;.45 0 .55 1;.45 0 .55 1" values="M-20 268 C260 196 560 324 824 245;M-20 269 C260 317 560 206 824 279;M-20 263 C260 222 560 270 824 253;M-20 268 C260 196 560 324 824 245"/></path><path class="draw" style="animation-delay:0.37s" pathLength="1000" stroke-opacity="0.18" d="M-20 269.6 C260 202 560 318.8 824 246.8"><animate attributeName="d" dur="16s" begin="-0.22s" repeatCount="indefinite" calcMode="spline" keyTimes="0.000;0.333;0.667;1.000" keySplines=".45 0 .55 1;.45 0 .55 1;.45 0 .55 1" values="M-20 269.6 C260 202 560 318.8 824 246.8;M-20 267.6 C260 312 560 212 824 277.6;M-20 264.8 C260 226.4 560 274 824 251.2;M-20 269.6 C260 202 560 318.8 824 246.8"/></path><path class="draw" style="animation-delay:0.44s" pathLength="1000" stroke-opacity="0.29" d="M-20 271.2 C260 208 560 313.6 824 248.6"><animate attributeName="d" dur="16s" begin="-0.44s" repeatCount="indefinite" calcMode="spline" keyTimes="0.000;0.333;0.667;1.000" keySplines=".45 0 .55 1;.45 0 .55 1;.45 0 .55 1" values="M-20 271.2 C260 208 560 313.6 824 248.6;M-20 266.2 C260 307 560 218 824 276.2;M-20 266.6 C260 230.8 560 278 824 249.4;M-20 271.2 C260 208 560 313.6 824 248.6"/></path><path class="draw" style="animation-delay:0.51s" pathLength="1000" stroke-opacity="0.39" d="M-20 272.8 C260 214 560 308.4 824 250.4"><animate attributeName="d" dur="16s" begin="-0.66s" repeatCount="indefinite" calcMode="spline" keyTimes="0.000;0.333;0.667;1.000" keySplines=".45 0 .55 1;.45 0 .55 1;.45 0 .55 1" values="M-20 272.8 C260 214 560 308.4 824 250.4;M-20 264.8 C260 302 560 224 824 274.8;M-20 268.4 C260 235.2 560 282 824 247.6;M-20 272.8 C260 214 560 308.4 824 250.4"/></path><path class="draw" style="animation-delay:0.58s" pathLength="1000" stroke-opacity="0.50" d="M-20 274.4 C260 220 560 303.2 824 252.2"><animate attributeName="d" dur="16s" begin="-0.88s" repeatCount="indefinite" calcMode="spline" keyTimes="0.000;0.333;0.667;1.000" keySplines=".45 0 .55 1;.45 0 .55 1;.45 0 .55 1" values="M-20 274.4 C260 220 560 303.2 824 252.2;M-20 263.4 C260 297 560 230 824 273.4;M-20 270.2 C260 239.6 560 286 824 245.8;M-20 274.4 C260 220 560 303.2 824 252.2"/></path><path class="draw" style="animation-delay:0.65s" pathLength="1000" stroke-opacity="0.60" d="M-20 276 C260 226 560 298 824 254"><animate attributeName="d" dur="16s" begin="-1.10s" repeatCount="indefinite" calcMode="spline" keyTimes="0.000;0.333;0.667;1.000" keySplines=".45 0 .55 1;.45 0 .55 1;.45 0 .55 1" values="M-20 276 C260 226 560 298 824 254;M-20 262 C260 292 560 236 824 272;M-20 272 C260 244 560 290 824 244;M-20 276 C260 226 560 298 824 254"/></path><path class="draw" style="animation-delay:0.72s" pathLength="1000" stroke-opacity="0.50" d="M-20 277.6 C260 232 560 292.8 824 255.8"><animate attributeName="d" dur="16s" begin="-1.32s" repeatCount="indefinite" calcMode="spline" keyTimes="0.000;0.333;0.667;1.000" keySplines=".45 0 .55 1;.45 0 .55 1;.45 0 .55 1" values="M-20 277.6 C260 232 560 292.8 824 255.8;M-20 260.6 C260 287 560 242 824 270.6;M-20 273.8 C260 248.4 560 294 824 242.2;M-20 277.6 C260 232 560 292.8 824 255.8"/></path><path class="draw" style="animation-delay:0.79s" pathLength="1000" stroke-opacity="0.39" d="M-20 279.2 C260 238 560 287.6 824 257.6"><animate attributeName="d" dur="16s" begin="-1.54s" repeatCount="indefinite" calcMode="spline" keyTimes="0.000;0.333;0.667;1.000" keySplines=".45 0 .55 1;.45 0 .55 1;.45 0 .55 1" values="M-20 279.2 C260 238 560 287.6 824 257.6;M-20 259.2 C260 282 560 248 824 269.2;M-20 275.6 C260 252.8 560 298 824 240.4;M-20 279.2 C260 238 560 287.6 824 257.6"/></path><path class="draw" style="animation-delay:0.86s" pathLength="1000" stroke-opacity="0.29" d="M-20 280.8 C260 244 560 282.4 824 259.4"><animate attributeName="d" dur="16s" begin="-1.76s" repeatCount="indefinite" calcMode="spline" keyTimes="0.000;0.333;0.667;1.000" keySplines=".45 0 .55 1;.45 0 .55 1;.45 0 .55 1" values="M-20 280.8 C260 244 560 282.4 824 259.4;M-20 257.8 C260 277 560 254 824 267.8;M-20 277.4 C260 257.2 560 302 824 238.6;M-20 280.8 C260 244 560 282.4 824 259.4"/></path><path class="draw" style="animation-delay:0.93s" pathLength="1000" stroke-opacity="0.18" d="M-20 282.4 C260 250 560 277.2 824 261.2"><animate attributeName="d" dur="16s" begin="-1.98s" repeatCount="indefinite" calcMode="spline" keyTimes="0.000;0.333;0.667;1.000" keySplines=".45 0 .55 1;.45 0 .55 1;.45 0 .55 1" values="M-20 282.4 C260 250 560 277.2 824 261.2;M-20 256.4 C260 272 560 260 824 266.4;M-20 279.2 C260 261.6 560 306 824 236.8;M-20 282.4 C260 250 560 277.2 824 261.2"/></path><path class="draw" style="animation-delay:1.00s" pathLength="1000" stroke-opacity="0.08" d="M-20 284 C260 256 560 272 824 263"><animate attributeName="d" dur="16s" begin="-2.20s" repeatCount="indefinite" calcMode="spline" keyTimes="0.000;0.333;0.667;1.000" keySplines=".45 0 .55 1;.45 0 .55 1;.45 0 .55 1" values="M-20 284 C260 256 560 272 824 263;M-20 255 C260 267 560 266 824 265;M-20 281 C260 266 560 310 824 235;M-20 284 C260 256 560 272 824 263"/></path></g><g fill="none" stroke-linecap="round" filter="url(#glow)"><path pathLength="1000" stroke="#6EE7B7" stroke-width="1.4" stroke-opacity="0.35" stroke-dasharray="200 3000" stroke-dashoffset="200" d="M-20 276 C260 226 560 298 824 254"><animate attributeName="d" dur="16s" begin="-1.10s" repeatCount="indefinite" calcMode="spline" keyTimes="0.000;0.333;0.667;1.000" keySplines=".45 0 .55 1;.45 0 .55 1;.45 0 .55 1" values="M-20 276 C260 226 560 298 824 254;M-20 262 C260 292 560 236 824 272;M-20 272 C260 244 560 290 824 244;M-20 276 C260 226 560 298 824 254"/><animate attributeName="stroke-dashoffset" values="200;-1000" dur="8s" begin="5.8s" repeatCount="indefinite" calcMode="spline" keyTimes="0;1" keySplines=".5 0 .3 1"/></path><path pathLength="1000" stroke="#6EE7B7" stroke-width="2" stroke-opacity="1" stroke-dasharray="50 3000" stroke-dashoffset="50" d="M-20 276 C260 226 560 298 824 254"><animate attributeName="d" dur="16s" begin="-1.10s" repeatCount="indefinite" calcMode="spline" keyTimes="0.000;0.333;0.667;1.000" keySplines=".45 0 .55 1;.45 0 .55 1;.45 0 .55 1" values="M-20 276 C260 226 560 298 824 254;M-20 262 C260 292 560 236 824 272;M-20 272 C260 244 560 290 824 244;M-20 276 C260 226 560 298 824 254"/><animate attributeName="stroke-dashoffset" values="50;-1000" dur="8s" begin="5.8s" repeatCount="indefinite" calcMode="spline" keyTimes="0;1" keySplines=".5 0 .3 1"/></path></g>
 
   <g class="in">
