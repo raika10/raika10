@@ -1,5 +1,7 @@
 // fluid.html の流体を 1 コマずつ PNG に書き出す（Playwright + PC に入っている Edge を使用）
-//   node render.mjs [fps] [seconds]
+//   node render.mjs [fps] [seconds] [width] [height]
+// 背景はもともと柔らかい表現なので、表示サイズ（804×300）の半分で書き出して拡大表示する。
+// スマホでの 1 コマあたりの描画・デコード負荷とファイルサイズが約 1/4 になる。
 import { chromium } from "playwright";
 import { mkdir, writeFile, rm } from "node:fs/promises";
 import path from "node:path";
@@ -8,7 +10,8 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 const here = path.dirname(fileURLToPath(import.meta.url));
 const FPS = Number(process.argv[2] || 12);
 const SECONDS = Number(process.argv[3] || 16);
-const W = 804, H = 300;
+const W = Number(process.argv[4] || 402);
+const H = Number(process.argv[5] || 150);
 const N = FPS * SECONDS;
 const outDir = path.join(here, ".cache", "frames");
 
