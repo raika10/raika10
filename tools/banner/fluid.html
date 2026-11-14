@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>Underwater paint</title>
+<style>html,body{margin:0;background:#0B1220}canvas{display:block}</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script>
+/*
+ * 水中で絵の具が溶け出し、混ざり合っていく背景（WebGL / GLSL）
+ *
+ * ・水の流れ：ノイズで空間を 2 段階にゆがめる（ドメインワーピング）。大きなうねりの上に細かいうずが乗る
+ * ・絵の具：複数の「源」を、ゆがんだ空間の中に置く。源から離れるほど薄くなるので、
+ *           輪郭が流れに引き伸ばされながら有機的に崩れ、煙のように広がる
+ * ・混色：各色を濃度で重み付けして平均するので、重なった部分に自然な中間色が生まれる
+ * ・ループ：時間はノイズの z 軸に割り当て、z 方向に周期 P で循環するノイズを使う。
+ *           源の位置・濃さも同じ周期で動くので、最後のコマと最初のコマが完全につながる
+ *
+ * 使い方：?w=幅&h=高さ で開き、window.renderFrame(phase) を呼ぶ（phase は 0〜1 のループ位置）
+ * README では JavaScript が動かないため、tools/banner/render.mjs で全コマを書き出して使う
+ */
+const params = new URLSearchParams(location.search);
+const W = +params.get("w") || 804;
+const H = +params.get("h") || 300;
+const canvas = document.getElementById("c");
+canvas.width = W; canvas.height = H;
+const gl = canvas.getContext("webgl", { preserveDrawingBuffer: true, antialias: false });
+
+const VERT = `attribute vec2 a; void main(){ gl_Position = vec4(a, 0.0, 1.0); }`;
+const FRAG = `
+precision highp float;
+uniform vec2 uRes;
+uniform float uPhase;          // 0〜1：ループ内の位置
+const float P = 4.0;           // ノイズの z 方向の周期（1 ループで z が 0→P 進む）
+const float TAU = 6.2831853;
+
+// ---- z 方向に周期 P で循環する 3D グラディエントノイズ ----
+float hash(vec3 p){ return fract(sin(dot(p, vec3(127.1, 311.7, 74.7))) * 43758.5453123); }
+vec3 grad(vec3 c){
+  float a = hash(c) * TAU;
+  float z = hash(c + 31.41) * 2.0 - 1.0;
+  float r = sqrt(1.0 - z * z);
+  return vec3(r * cos(a), r * sin(a), z);
+}
+float corner(vec3 i, vec3 f, vec3 o){
+  vec3 c = i + o;
+  c.z = mod(c.z, P);           // z の格子を周期 P で折り返す → 時間方向にシームレス
+  return dot(grad(c), f - o);
+}
+float noise(vec3 p){
+  vec3 i = floor(p), f = fract(p);
+  vec3 u = f * f * f * (f * (f * 6.0 - 15.0) + 10.0);
+  float n000 = corner(i, f, vec3(0.0, 0.0, 0.0)), n100 = corner(i, f, vec3(1.0, 0.0, 0.0));
+  float n010 = corner(i, f, vec3(0.0, 1.0, 0.0)), n110 = corner(i, f, vec3(1.0, 1.0, 0.0));
+  float n001 = corner(i, f, vec3(0.0, 0.0, 1.0)), n101 = corner(i, f, vec3(1.0, 0.0, 1.0));
+  float n011 = corner(i, f, vec3(0.0, 1.0, 1.0)), n111 = corner(i, f, vec3(1.0, 1.0, 1.0));
+  return mix(mix(mix(n000, n100, u.x), mix(n010, n110, u.x), u.y),
+             mix(mix(n001, n101, u.x), mix(n011, n111, u.x), u.y), u.z);
+}
+// 4 オクターブの fBm。xy は回転しながら 2 倍、z も 2 倍（周期 P の約数になるのでループは保たれる）
+float fbm(vec3 p){
+  float s = 0.0, a = 0.5;
+  for (int k = 0; k < 4; k++) {
+    s += a * noise(p);
+    p.xy = mat2(1.6, 1.2, -1.2, 1.6) * p.xy;
+    p.z *= 2.0;
+    a *= 0.5;
+  }
+  return s;
+}
+
+void main(){
+  vec2 p = (gl_FragCoord.xy - 0.5 * uRes) / uRes.y;   // 縦 -0.5〜0.5、横は画面比に合わせる
+  float z = uPhase * P;
+
+  // 水の流れ：1 段目は大きなうねり、2 段目はその流れに乗った細かいうず
+  vec2 q = vec2(fbm(vec3(p * 1.35, z)),
+                fbm(vec3(p * 1.35 + vec2(5.2, 1.3), z + 1.7)));
+  vec2 r = vec2(fbm(vec3(p * 1.35 + 2.2 * q + vec2(1.7, 9.2), z + 0.6)),
+                fbm(vec3(p * 1.35 + 2.2 * q + vec2(8.3, 2.8), z + 2.9)));
+  vec2 w = p + 0.40 * q + 0.32 * r;                      // 絵の具が流されていく先
+
+  // 絵の具の中の濃淡（煙の筋のようなディテール）と、ふくらみの陰影（立体感）
+  float detail = fbm(vec3(w * 2.1 + 2.4 * r, z + 3.3));
+  float billow = fbm(vec3(w * 1.2 - 1.5 * q, z + 1.1));
+
+  // 絵の具の源：色・位置・広がり・タイミングのずれ
+  vec3 cs[5]; vec2 ss[5]; float rs[5]; float os[5];
+  cs[0] = vec3(0.06, 0.66, 0.46); ss[0] = vec2(-0.98,  0.14); rs[0] = 0.40; os[0] = 0.00;  // エメラルド
+  cs[1] = vec3(0.05, 0.40, 0.50); ss[1] = vec2(-0.36, -0.24); rs[1] = 0.33; os[1] = 0.21;  // ディープティール
+  cs[2] = vec3(0.38, 0.80, 0.64); ss[2] = vec2( 0.12,  0.20); rs[2] = 0.27; os[2] = 0.43;  // ミント
+  cs[3] = vec3(0.20, 0.64, 0.86); ss[3] = vec2( 0.74, -0.08); rs[3] = 0.42; os[3] = 0.62;  // シアン
+  cs[4] = vec3(0.14, 0.34, 0.70); ss[4] = vec2( 1.12,  0.26); rs[4] = 0.30; os[4] = 0.81;  // ディープブルー
+
+  float D = 0.0;
+  vec3 C = vec3(0.0);
+  for (int i = 0; i < 5; i++) {
+    float ph = TAU * (uPhase + os[i]);
+    vec2 s = ss[i] + vec2(cos(ph), sin(ph)) * vec2(0.12, 0.07);           // 源がゆっくり漂う
+    float bloom = 0.5 + 0.5 * sin(ph + 1.3 * float(i));                    // 溶け出しては薄まる
+    float rad = rs[i] * (0.80 + 0.40 * bloom);
+    vec2 dv = w - s;
+    float d = exp(-dot(dv, dv) / (rad * rad)) * (0.30 + 0.70 * bloom);
+    d *= clamp(0.48 + 1.55 * detail, 0.0, 1.7);    // 濃淡で水の部分がのぞく
+    D += d;
+    C += d * cs[i];
+  }
+  vec3 ink = C / max(D, 1e-4);                 // 濃度で重み付けした平均 → 重なりに中間色
+  float a = 1.0 - exp(-1.3 * D);               // 絵の具の濃さ（半透明）
+
+  // 水：深い紺。水面側（上）からわずかに光が差す
+  vec3 water = vec3(0.043, 0.071, 0.125) + vec3(0.008, 0.026, 0.040) * smoothstep(-0.5, 0.5, p.y);
+  float shade = 0.72 + 0.42 * smoothstep(-0.35, 0.45, billow);  // ふくらんだところは明るく、くぼみは沈む
+  vec3 col = mix(water, ink * shade, a * 0.88);
+  // 薄い縁が少しだけ明るく透ける（発光ではなく、半透明のにじみ）
+  col += 0.045 * ink * smoothstep(0.12, 0.45, a) * (1.0 - smoothstep(0.45, 0.85, a));
+  gl_FragColor = vec4(col, 1.0);
+}`;
+
+function compile(type, src) {
+  const s = gl.createShader(type);
+  gl.shaderSource(s, src);
+  gl.compileShader(s);
+  if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s));
+  return s;
+}
+const prog = gl.createProgram();
+gl.attachShader(prog, compile(gl.VERTEX_SHADER, VERT));
+gl.attachShader(prog, compile(gl.FRAGMENT_SHADER, FRAG));
+gl.linkProgram(prog);
+if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(prog));
+gl.useProgram(prog);
+
+const buf = gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+const loc = gl.getAttribLocation(prog, "a");
+gl.enableVertexAttribArray(loc);
+gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+gl.uniform2f(gl.getUniformLocation(prog, "uRes"), W, H);
+const uPhase = gl.getUniformLocation(prog, "uPhase");
+gl.viewport(0, 0, W, H);
+
+// 指定したループ位置の 1 コマを描いて PNG（data URL）で返す
+window.renderFrame = (phase) => {
+  gl.uniform1f(uPhase, phase);
+  gl.drawArrays(gl.TRIANGLES, 0, 3);
+  gl.finish();
+  return canvas.toDataURL("image/png");
+};
+
+// ブラウザで直接開いたときは、そのまま動くプレビューにする（?preview=1）
+if (params.get("preview")) {
+  const LOOP = 16000;
+  const tick = (t) => { window.renderFrame((t % LOOP) / LOOP); requestAnimationFrame(tick); };
+  requestAnimationFrame(tick);
+}
+window.ready = true;
+</script>
+</body>
+</html>

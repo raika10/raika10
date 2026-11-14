@@ -1,0 +1,13 @@
+{
+  "name": "banner-tools",
+  "private": true,
+  "type": "module",
+  "description": "README ヘッダーの背景（水中の絵の具）を作るための道具",
+  "scripts": {
+    "preview": "start fluid.html?preview=1",
+    "build": "node render.mjs 20 16 && python encode.py 20 88 && node embed.mjs ../../assets/banner-v7.svg ../../assets/banner-v7.svg"
+  },
+  "dependencies": {
+    "playwright": "1.56.0"
+  }
+}
