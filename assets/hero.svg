@@ -1,100 +1,103 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="540" viewBox="0 0 1200 540" role="img" aria-label="raika10 — Hello, I'm raika.">
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" viewBox="0 0 1200 600" role="img" aria-label="RAIKA10 — Creative Developer">
   <defs>
-    <radialGradient id="sphere" cx="0.35" cy="0.3" r="0.85">
-      <stop offset="0" stop-color="#DCE8FF"/>
-      <stop offset="0.28" stop-color="#7FAEFF"/>
-      <stop offset="0.65" stop-color="#2F6BEA"/>
-      <stop offset="1" stop-color="#0A1628"/>
+    <radialGradient id="mint" cx=".35" cy=".3" r=".75">
+      <stop offset="0" stop-color="#B8F5E1"/>
+      <stop offset=".45" stop-color="#4FD3AB"/>
+      <stop offset="1" stop-color="#22A982"/>
     </radialGradient>
-    <radialGradient id="halo" cx="0.5" cy="0.5" r="0.5">
-      <stop offset="0" stop-color="#4C8DFF" stop-opacity=".28"/>
-      <stop offset="1" stop-color="#4C8DFF" stop-opacity="0"/>
+    <radialGradient id="pearl" cx=".35" cy=".3" r=".75">
+      <stop offset="0" stop-color="#FFFFFF"/>
+      <stop offset=".55" stop-color="#F3F6F7"/>
+      <stop offset="1" stop-color="#D6DEE2"/>
     </radialGradient>
-    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0" stop-color="#A9C7FF"/>
-      <stop offset="1" stop-color="#4C8DFF"/>
+    <linearGradient id="btn" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#5ADBB4"/>
+      <stop offset="1" stop-color="#2DB88E"/>
     </linearGradient>
-    <filter id="grain" x="0" y="0" width="100%" height="100%">
-      <feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" stitchTiles="stitch"/>
-      <feColorMatrix type="saturate" values="0"/>
+    <filter id="card" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#1F2933" flood-opacity=".12"/>
     </filter>
-    <clipPath id="card"><rect width="1200" height="540" rx="28"/></clipPath>
+    <filter id="sh" x="-60%" y="-60%" width="220%" height="240%">
+      <feDropShadow dx="0" dy="5" stdDeviation="5" flood-color="#0F3D30" flood-opacity=".2"/>
+    </filter>
+    <clipPath id="clip"><rect x="24" y="20" width="1152" height="552" rx="18"/></clipPath>
+    <path id="rail" d="M24 440 C 320 500, 560 410, 800 470 S 1060 520, 1176 460"/>
   </defs>
 
   <style>
-    .mono  { font-family: 'SF Mono', 'JetBrains Mono', Consolas, Menlo, monospace; }
-    .sans  { font-family: 'Helvetica Neue', 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', Arial, sans-serif; }
-    .serif { font-family: Georgia, 'Times New Roman', 'Yu Mincho', serif; }
-    .in    { animation: rise 1.2s cubic-bezier(.16,.84,.3,1) both; }
-    .d1 { animation-delay: .15s; } .d2 { animation-delay: .3s; } .d3 { animation-delay: .45s; } .d4 { animation-delay: .6s; }
-    .fade  { animation: fade 1.6s .2s ease-out both; }
-    .spin  { transform-origin: 990px 262px; animation: spin 60s linear infinite; }
-    .spinr { transform-origin: 990px 262px; animation: spin 22s linear infinite reverse; }
-    .pulse { animation: pulse 2.4s ease-in-out infinite; }
-    @keyframes rise  { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
-    @keyframes fade  { from { opacity: 0; } to { opacity: 1; } }
-    @keyframes spin  { to { transform: rotate(360deg); } }
-    @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .25; } }
+    .sans { font-family: 'Segoe UI', 'Helvetica Neue', 'Hiragino Sans', 'Yu Gothic', Arial, sans-serif; }
+    .in   { animation: rise .9s cubic-bezier(.2,.8,.2,1) both; }
+    .pop  { transform-box: fill-box; transform-origin: center; animation: pop .8s cubic-bezier(.34,1.56,.64,1) both; }
+    .f1 { animation: float 6s ease-in-out infinite; }
+    .f2 { animation: float2 7.5s ease-in-out -2s infinite; }
+    .f3 { animation: float 5s ease-in-out -1s infinite; }
+    .f4 { animation: float2 8.5s ease-in-out -3s infinite; }
+    .ping { transform-box: fill-box; transform-origin: center; animation: ping 2.4s ease-out infinite; }
+    .draw { stroke-dasharray: 1400; animation: draw 2.4s .3s cubic-bezier(.6,0,.2,1) both; }
+    @keyframes rise   { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+    @keyframes pop    { from { opacity: 0; transform: scale(0); } to { opacity: 1; transform: scale(1); } }
+    @keyframes float  { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-14px); } }
+    @keyframes float2 { 0%,100% { transform: translate(0,0); } 50% { transform: translate(8px,-10px); } }
+    @keyframes ping   { 0% { opacity: .55; transform: scale(1); } 100% { opacity: 0; transform: scale(1.35,1.7); } }
+    @keyframes draw   { from { stroke-dashoffset: 1400; } to { stroke-dashoffset: 0; } }
   </style>
 
-  <g clip-path="url(#card)">
-    <rect width="1200" height="540" fill="#0A1628"/>
-    <rect width="1200" height="540" filter="url(#grain)" opacity=".05"/>
+  <!-- slide -->
+  <rect x="24" y="20" width="1152" height="552" rx="18" fill="#FFFFFF" filter="url(#card)"/>
 
-    <!-- frame rules -->
-    <g stroke="#1C2B45" stroke-width="1">
-      <line x1="72" y1="96" x2="1128" y2="96"/>
-      <line x1="72" y1="440" x2="1128" y2="440"/>
+  <g clip-path="url(#clip)">
+    <!-- waves -->
+    <g fill="none" stroke-linecap="round">
+      <path stroke="#C9D3D8" stroke-width="1.2" d="M24 470 C 260 400, 480 540, 720 470 S 1020 410, 1176 450">
+        <animate attributeName="d" dur="9s" repeatCount="indefinite" calcMode="spline" keyTimes="0;.5;1" keySplines=".45 0 .55 1;.45 0 .55 1"
+          values="M24 470 C 260 400, 480 540, 720 470 S 1020 410, 1176 450;M24 455 C 260 520, 480 420, 720 485 S 1020 470, 1176 430;M24 470 C 260 400, 480 540, 720 470 S 1020 410, 1176 450"/>
+      </path>
+      <path stroke="#E1E7EA" stroke-width="1" d="M24 500 C 300 440, 520 560, 760 490 S 1040 450, 1176 480">
+        <animate attributeName="d" dur="11s" repeatCount="indefinite" calcMode="spline" keyTimes="0;.5;1" keySplines=".45 0 .55 1;.45 0 .55 1"
+          values="M24 500 C 300 440, 520 560, 760 490 S 1040 450, 1176 480;M24 490 C 300 545, 520 450, 760 505 S 1040 500, 1176 470;M24 500 C 300 440, 520 560, 760 490 S 1040 450, 1176 480"/>
+      </path>
+      <use href="#rail" class="draw" stroke="#4FD3AB" stroke-opacity=".75" stroke-width="1.6"/>
+    </g>
+    <!-- riders on the mint rail -->
+    <g filter="url(#sh)">
+      <circle r="8" fill="url(#mint)">
+        <animateMotion dur="10s" repeatCount="indefinite" begin="2.5s"><mpath href="#rail"/></animateMotion>
+      </circle>
+      <circle r="5" fill="url(#pearl)">
+        <animateMotion dur="14s" repeatCount="indefinite" begin="2.5s" keyPoints="1;0" keyTimes="0;1" calcMode="linear"><mpath href="#rail"/></animateMotion>
+      </circle>
     </g>
 
-    <!-- masthead -->
-    <g class="mono fade" font-size="12" letter-spacing="3" fill="#7F93B2">
-      <text x="72" y="64">RAIKA10</text>
-      <text x="600" y="64" text-anchor="middle">PERSONAL INDEX</text>
-      <text x="1128" y="64" text-anchor="end">VOL. 01 — 2026</text>
+    <!-- floating spheres -->
+    <g filter="url(#sh)">
+      <g class="pop" style="animation-delay:.10s"><g class="f1"><circle cx="190" cy="150" r="26" fill="url(#mint)"/></g></g>
+      <g class="pop" style="animation-delay:.18s"><g class="f2"><circle cx="262" cy="92"  r="13" fill="url(#pearl)"/></g></g>
+      <g class="pop" style="animation-delay:.26s"><g class="f3"><circle cx="118" cy="240" r="17" fill="url(#pearl)"/></g></g>
+      <g class="pop" style="animation-delay:.34s"><g class="f4"><circle cx="150" cy="335" r="9"  fill="url(#mint)"/></g></g>
+      <g class="pop" style="animation-delay:.42s"><g class="f2"><circle cx="330" cy="395" r="14" fill="url(#mint)"/></g></g>
+      <g class="pop" style="animation-delay:.50s"><g class="f3"><circle cx="420" cy="138" r="6"  fill="url(#mint)"/></g></g>
+      <g class="pop" style="animation-delay:.14s"><g class="f4"><circle cx="965" cy="122" r="30" fill="url(#mint)"/></g></g>
+      <g class="pop" style="animation-delay:.22s"><g class="f1"><circle cx="1040" cy="205" r="12" fill="url(#pearl)"/></g></g>
+      <g class="pop" style="animation-delay:.30s"><g class="f3"><circle cx="1075" cy="310" r="17" fill="url(#mint)"/></g></g>
+      <g class="pop" style="animation-delay:.38s"><g class="f2"><circle cx="905" cy="345" r="10" fill="url(#pearl)"/></g></g>
+      <g class="pop" style="animation-delay:.46s"><g class="f1"><circle cx="760" cy="112" r="8"  fill="url(#pearl)"/></g></g>
+      <g class="pop" style="animation-delay:.54s"><g class="f4"><circle cx="1110" cy="96" r="6"  fill="url(#mint)"/></g></g>
+      <g class="pop" style="animation-delay:.62s"><g class="f3"><circle cx="1100" cy="520" r="11" fill="url(#pearl)"/></g></g>
+      <g class="pop" style="animation-delay:.70s"><g class="f1"><circle cx="90"  cy="520" r="7"  fill="url(#mint)"/></g></g>
     </g>
 
-    <!-- artwork -->
-    <g class="fade">
-      <g stroke="#1C2B45" stroke-width="1">
-        <line x1="800" y1="262" x2="1180" y2="262"/>
-        <line x1="990" y1="96" x2="990" y2="440"/>
-      </g>
-      <circle cx="990" cy="262" r="230" fill="url(#halo)"/>
-      <circle cx="990" cy="262" r="128" fill="url(#sphere)"/>
-      <g class="spin" fill="none">
-        <circle cx="990" cy="262" r="168" stroke="#4C8DFF" stroke-opacity=".55" stroke-dasharray="1 7" stroke-width="1.5" stroke-linecap="round"/>
-      </g>
-      <g class="spinr">
-        <circle cx="990" cy="262" r="200" fill="none" stroke="#A9C7FF" stroke-opacity=".18"/>
-        <circle cx="1190" cy="262" r="4" fill="#DCE8FF"/>
-      </g>
-      <g stroke="#7F93B2" stroke-width="1">
-        <path d="M818 126h12M824 120v12"/>
-        <path d="M1150 404h12M1156 398v12"/>
-      </g>
-      <text class="mono" x="818" y="420" font-size="10" letter-spacing="2" fill="#7F93B2">FIG. 01 — ORBIT</text>
+    <!-- text -->
+    <g class="sans" text-anchor="middle">
+      <text class="in" x="600" y="262" font-size="96" font-weight="800" fill="#1F2933" letter-spacing="4">RAIKA10</text>
+      <text class="in" style="animation-delay:.15s" x="600" y="314" font-size="26" font-weight="600" fill="#2DB88E">Creative Developer</text>
+      <text class="in" style="animation-delay:.28s" x="600" y="346" font-size="12" fill="#8A949E" letter-spacing="3">CODE · CREATE · EXPLORE — BASED IN JAPAN</text>
     </g>
 
-    <!-- headline -->
-    <text class="sans in" x="72" y="180" font-size="20" fill="#7F93B2" letter-spacing=".5">Hello, world —</text>
-    <text class="serif in d1" x="66" y="300" font-size="124" fill="#E6EEF8" letter-spacing="-3">I’m <tspan font-style="italic" fill="url(#accent)">raika.</tspan></text>
-    <text class="sans in d2" x="72" y="358" font-size="19" fill="#B4C3DA">Developer crafting calm, thoughtful things on the web.</text>
-    <text class="sans in d3" x="72" y="392" font-size="16" fill="#7F93B2" letter-spacing="2">コードで、心地よいものをつくる。</text>
-
-    <!-- meta row -->
-    <g class="in d4">
-      <g class="mono" font-size="11" letter-spacing="2.5" fill="#7F93B2">
-        <text x="72"  y="482">ROLE</text>
-        <text x="452" y="482">BASED IN</text>
-        <text x="832" y="482">STATUS</text>
-      </g>
-      <g class="sans" font-size="17" fill="#E6EEF8">
-        <text x="72"  y="510">Developer</text>
-        <text x="452" y="510">Japan</text>
-        <text x="850" y="510">Open to collaborate</text>
-      </g>
-      <circle class="pulse" cx="837" cy="504" r="4" fill="#4C8DFF"/>
+    <!-- pill button -->
+    <g class="in" style="animation-delay:.4s">
+      <rect class="ping" x="545" y="372" width="110" height="36" rx="18" fill="none" stroke="#4FD3AB" stroke-width="2"/>
+      <rect x="545" y="372" width="110" height="36" rx="18" fill="url(#btn)" filter="url(#sh)"/>
+      <text class="sans" x="600" y="395" text-anchor="middle" font-size="14" font-weight="600" fill="#FFFFFF" letter-spacing="1">Hello!</text>
     </g>
   </g>
 </svg>

@@ -1,75 +1,158 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="460" viewBox="0 0 1200 460" role="img" aria-label="About and Toolkit">
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="580" viewBox="0 0 1200 580" role="img" aria-label="About Me / My Toolkit">
   <defs>
-    <filter id="grain" x="0" y="0" width="100%" height="100%">
-      <feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" stitchTiles="stitch"/>
-      <feColorMatrix type="saturate" values="0"/>
+    <linearGradient id="panel" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#5ADBB4"/>
+      <stop offset="1" stop-color="#26AF86"/>
+    </linearGradient>
+    <linearGradient id="head" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#4FD3AB"/>
+      <stop offset="1" stop-color="#2DB88E"/>
+    </linearGradient>
+    <radialGradient id="mint" cx=".35" cy=".3" r=".75">
+      <stop offset="0" stop-color="#B8F5E1"/>
+      <stop offset=".45" stop-color="#4FD3AB"/>
+      <stop offset="1" stop-color="#22A982"/>
+    </radialGradient>
+    <radialGradient id="pearl" cx=".35" cy=".3" r=".75">
+      <stop offset="0" stop-color="#FFFFFF"/>
+      <stop offset=".55" stop-color="#F3F6F7"/>
+      <stop offset="1" stop-color="#D6DEE2"/>
+    </radialGradient>
+    <filter id="card" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#1F2933" flood-opacity=".12"/>
     </filter>
-    <clipPath id="card"><rect width="1200" height="460" rx="28"/></clipPath>
+    <filter id="soft" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#1F2933" flood-opacity=".1"/>
+    </filter>
+    <filter id="sh" x="-60%" y="-60%" width="220%" height="240%">
+      <feDropShadow dx="0" dy="5" stdDeviation="5" flood-color="#0F3D30" flood-opacity=".2"/>
+    </filter>
+    <clipPath id="clip"><rect x="24" y="20" width="1152" height="532" rx="18"/></clipPath>
   </defs>
 
   <style>
-    .mono  { font-family: 'SF Mono', 'JetBrains Mono', Consolas, Menlo, monospace; }
-    .sans  { font-family: 'Helvetica Neue', 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', Arial, sans-serif; }
-    .serif { font-family: Georgia, 'Times New Roman', 'Yu Mincho', serif; }
-    .in { animation: rise 1.1s cubic-bezier(.16,.84,.3,1) both; }
-    .d1 { animation-delay: .12s; } .d2 { animation-delay: .24s; } .d3 { animation-delay: .36s; }
-    @keyframes rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+    .sans { font-family: 'Segoe UI', 'Helvetica Neue', 'Hiragino Sans', 'Yu Gothic', Arial, sans-serif; }
+    .in   { animation: rise .9s cubic-bezier(.2,.8,.2,1) both; }
+    .slide{ animation: slide 1s cubic-bezier(.2,.8,.2,1) both; }
+    .card { animation: rise 1s cubic-bezier(.2,.8,.2,1) both; }
+    .pop  { transform-box: fill-box; transform-origin: center; animation: pop .8s cubic-bezier(.34,1.56,.64,1) both; }
+    .spin { transform-box: fill-box; transform-origin: center; animation: spin 18s linear infinite; }
+    .f1 { animation: float 6s ease-in-out infinite; }
+    .f2 { animation: float 7.5s ease-in-out -2s infinite; }
+    .f3 { animation: float 5s ease-in-out -1s infinite; }
+    .bar  { transform-box: fill-box; transform-origin: left; animation: grow 1.2s cubic-bezier(.2,.8,.2,1) both; }
+    @keyframes rise  { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
+    @keyframes slide { from { opacity: 0; transform: translateX(-40px); } to { opacity: 1; transform: none; } }
+    @keyframes pop   { from { opacity: 0; transform: scale(0); } to { opacity: 1; transform: scale(1); } }
+    @keyframes spin  { to { transform: rotate(360deg); } }
+    @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+    @keyframes grow  { from { transform: scaleX(0); } to { transform: scaleX(1); } }
   </style>
 
-  <g clip-path="url(#card)">
-    <rect width="1200" height="460" fill="#0A1628"/>
-    <rect width="1200" height="460" filter="url(#grain)" opacity=".05"/>
-    <line x1="600" y1="64" x2="600" y2="396" stroke="#1C2B45"/>
+  <rect x="24" y="20" width="1152" height="532" rx="18" fill="#FFFFFF" filter="url(#card)"/>
 
-    <!-- 01 About -->
-    <g class="in">
-      <text class="mono" x="72" y="84" font-size="12" letter-spacing="3"><tspan fill="#4C8DFF">01</tspan><tspan fill="#7F93B2"> — ABOUT</tspan></text>
-      <text class="serif" x="70" y="150" font-size="42" fill="#E6EEF8" letter-spacing="-1">Less, but <tspan font-style="italic" fill="#A9C7FF">better.</tspan></text>
-      <text class="sans" x="72" y="196" font-size="16" fill="#B4C3DA" letter-spacing=".5">シンプルで、長く愛せるものが好きです。</text>
-      <text class="sans" x="72" y="224" font-size="16" fill="#B4C3DA" letter-spacing=".5">Web を中心に、つくることを楽しんでいます。</text>
-    </g>
-    <g class="in d1">
-      <g stroke="#1C2B45">
-        <line x1="72" y1="262" x2="528" y2="262"/>
-        <line x1="72" y1="306" x2="528" y2="306"/>
-        <line x1="72" y1="350" x2="528" y2="350"/>
-        <line x1="72" y1="394" x2="528" y2="394"/>
+  <g clip-path="url(#clip)">
+    <!-- ===== left mint panel ===== -->
+    <g class="slide">
+      <rect x="24" y="20" width="420" height="532" fill="url(#panel)"/>
+      <g fill="#FFFFFF">
+        <g class="f1"><circle cx="400" cy="70"  r="46" fill-opacity=".10"/></g>
+        <g class="f2"><circle cx="70"  cy="500" r="64" fill-opacity=".08"/></g>
+        <g class="f3"><circle cx="380" cy="470" r="14" fill-opacity=".18"/></g>
       </g>
-      <g class="mono" font-size="11" letter-spacing="2.5" fill="#7F93B2">
-        <text x="72" y="290">NOW</text>
-        <text x="72" y="334">LEARNING</text>
-        <text x="72" y="378">LIKES</text>
-      </g>
-      <g class="sans" font-size="16" fill="#E6EEF8">
-        <text x="200" y="290">個人開発プロジェクト</text>
-        <text x="200" y="334">モダンな Web 技術</text>
-        <text x="200" y="378">Design, Music, Coffee</text>
+
+      <!-- avatar -->
+      <circle class="spin" cx="234" cy="140" r="70" fill="none" stroke="#FFFFFF" stroke-opacity=".6" stroke-width="2" stroke-dasharray="3 9" stroke-linecap="round"/>
+      <circle cx="234" cy="140" r="56" fill="#FFFFFF" filter="url(#sh)"/>
+      <text class="sans" x="234" y="158" text-anchor="middle" font-size="50" font-weight="800" fill="#2DB88E">R</text>
+
+      <g class="sans" fill="#FFFFFF">
+        <text x="72" y="262" font-size="11" letter-spacing="3" fill-opacity=".8">WHO I AM</text>
+        <text x="72" y="298" font-size="32" font-weight="700">About Me</text>
+        <text x="72" y="330" font-size="13.5" fill-opacity=".92">シンプルで、長く愛せるものが好きです。</text>
+        <text x="72" y="353" font-size="13.5" fill-opacity=".92">Web を中心に、つくることを楽しんでいます。</text>
+
+        <line x1="72" y1="378" x2="396" y2="378" stroke="#FFFFFF" stroke-opacity=".35"/>
+        <g font-size="10.5" letter-spacing="2.5" fill-opacity=".78">
+          <text x="92" y="408">NOW</text>
+          <text x="92" y="456">LEARNING</text>
+          <text x="92" y="504">LIKES</text>
+        </g>
+        <g font-size="15" font-weight="600">
+          <text x="92" y="429">個人開発プロジェクト</text>
+          <text x="92" y="477">モダンな Web 技術</text>
+          <text x="92" y="525">Design, Music, Coffee</text>
+        </g>
+        <circle cx="76" cy="424" r="4"/>
+        <circle cx="76" cy="472" r="4"/>
+        <circle cx="76" cy="520" r="4"/>
       </g>
     </g>
 
-    <!-- 02 Toolkit -->
-    <g class="in d2">
-      <text class="mono" x="648" y="84" font-size="12" letter-spacing="3"><tspan fill="#4C8DFF">02</tspan><tspan fill="#7F93B2"> — TOOLKIT</tspan></text>
+    <!-- ===== right: toolkit ===== -->
+    <g class="sans in" style="animation-delay:.2s">
+      <text x="500" y="88" font-size="11" font-weight="700" letter-spacing="3" fill="#2DB88E">WHAT I USE</text>
+      <text x="500" y="128" font-size="32" font-weight="700" fill="#1F2933">My Toolkit</text>
+      <text x="500" y="158" font-size="14" fill="#8A949E">毎日の制作を支えている道具たち。</text>
+      <rect class="bar" style="animation-delay:.5s" x="500" y="172" width="48" height="4" rx="2" fill="#4FD3AB"/>
     </g>
-    <g class="in d3">
-      <g stroke="#1C2B45">
-        <line x1="648" y1="128" x2="1128" y2="128"/>
-        <line x1="648" y1="216" x2="1128" y2="216"/>
-        <line x1="648" y1="304" x2="1128" y2="304"/>
-        <line x1="648" y1="394" x2="1128" y2="394"/>
+
+    <g filter="url(#sh)">
+      <g class="pop" style="animation-delay:.4s"><g class="f1"><circle cx="1110" cy="80"  r="16" fill="url(#mint)"/></g></g>
+      <g class="pop" style="animation-delay:.5s"><g class="f2"><circle cx="1062" cy="122" r="8"  fill="url(#pearl)"/></g></g>
+      <g class="pop" style="animation-delay:.6s"><g class="f3"><circle cx="1000" cy="74"  r="5"  fill="url(#mint)"/></g></g>
+    </g>
+
+    <!-- card 1 -->
+    <g class="card" style="animation-delay:.35s">
+      <rect x="500" y="208" width="196" height="304" rx="12" fill="#FFFFFF" stroke="#EEF2F4" filter="url(#soft)"/>
+      <path d="M500 264 V220 a12 12 0 0 1 12 -12 h172 a12 12 0 0 1 12 12 V264 Z" fill="url(#head)"/>
+      <g class="sans" text-anchor="middle">
+        <text x="598" y="242" font-size="13" font-weight="700" letter-spacing="2.5" fill="#FFFFFF">LANGUAGES</text>
+        <text x="598" y="314" font-size="38" font-weight="800" fill="#2DB88E">03</text>
+        <text x="598" y="334" font-size="9.5" letter-spacing="2.5" fill="#A3ACB5">ITEMS</text>
+        <line x1="530" y1="352" x2="666" y2="352" stroke="#EEF2F4"/>
+        <g font-size="15" fill="#3B4650">
+          <text x="598" y="384">TypeScript</text>
+          <text x="598" y="414">JavaScript</text>
+          <text x="598" y="444">Python</text>
+        </g>
       </g>
-      <g class="mono" font-size="11" letter-spacing="2.5" fill="#7F93B2">
-        <text x="648" y="158">LANGUAGES</text>
-        <text x="648" y="246">FRAMEWORKS</text>
-        <text x="648" y="334">TOOLS</text>
-        <text x="1128" y="158" text-anchor="end">/ 03</text>
-        <text x="1128" y="246" text-anchor="end">/ 04</text>
-        <text x="1128" y="334" text-anchor="end">/ 04</text>
+    </g>
+
+    <!-- card 2 -->
+    <g class="card" style="animation-delay:.5s">
+      <rect x="718" y="208" width="196" height="304" rx="12" fill="#FFFFFF" stroke="#EEF2F4" filter="url(#soft)"/>
+      <path d="M718 264 V220 a12 12 0 0 1 12 -12 h172 a12 12 0 0 1 12 12 V264 Z" fill="url(#head)"/>
+      <g class="sans" text-anchor="middle">
+        <text x="816" y="242" font-size="13" font-weight="700" letter-spacing="2.5" fill="#FFFFFF">FRAMEWORKS</text>
+        <text x="816" y="314" font-size="38" font-weight="800" fill="#2DB88E">04</text>
+        <text x="816" y="334" font-size="9.5" letter-spacing="2.5" fill="#A3ACB5">ITEMS</text>
+        <line x1="748" y1="352" x2="884" y2="352" stroke="#EEF2F4"/>
+        <g font-size="15" fill="#3B4650">
+          <text x="816" y="384">React</text>
+          <text x="816" y="414">Next.js</text>
+          <text x="816" y="444">Node.js</text>
+          <text x="816" y="474">Tailwind CSS</text>
+        </g>
       </g>
-      <g class="sans" font-size="20" fill="#E6EEF8" letter-spacing=".3">
-        <text x="648" y="194">TypeScript <tspan fill="#4C8DFF">·</tspan> JavaScript <tspan fill="#4C8DFF">·</tspan> Python</text>
-        <text x="648" y="282">React <tspan fill="#4C8DFF">·</tspan> Next.js <tspan fill="#4C8DFF">·</tspan> Node.js <tspan fill="#4C8DFF">·</tspan> Tailwind</text>
-        <text x="648" y="370">Git <tspan fill="#4C8DFF">·</tspan> Docker <tspan fill="#4C8DFF">·</tspan> VS Code <tspan fill="#4C8DFF">·</tspan> Figma</text>
+    </g>
+
+    <!-- card 3 -->
+    <g class="card" style="animation-delay:.65s">
+      <rect x="936" y="208" width="196" height="304" rx="12" fill="#FFFFFF" stroke="#EEF2F4" filter="url(#soft)"/>
+      <path d="M936 264 V220 a12 12 0 0 1 12 -12 h172 a12 12 0 0 1 12 12 V264 Z" fill="url(#head)"/>
+      <g class="sans" text-anchor="middle">
+        <text x="1034" y="242" font-size="13" font-weight="700" letter-spacing="2.5" fill="#FFFFFF">TOOLS</text>
+        <text x="1034" y="314" font-size="38" font-weight="800" fill="#2DB88E">04</text>
+        <text x="1034" y="334" font-size="9.5" letter-spacing="2.5" fill="#A3ACB5">ITEMS</text>
+        <line x1="966" y1="352" x2="1102" y2="352" stroke="#EEF2F4"/>
+        <g font-size="15" fill="#3B4650">
+          <text x="1034" y="384">Git</text>
+          <text x="1034" y="414">Docker</text>
+          <text x="1034" y="444">VS Code</text>
+          <text x="1034" y="474">Figma</text>
+        </g>
       </g>
     </g>
   </g>
