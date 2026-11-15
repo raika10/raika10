@@ -30,13 +30,6 @@
   <img src="./assets/generated/activity.svg" width="804" alt="GitHub Activity Graph" />
 </p>
 
-<!-- ============================== Room ==============================
-  作業部屋のミニチュア（Claude Code と一緒に作業中）。tools/banner で npm run build:room を実行すると作り直せます
--->
-<p align="center">
-  <img src="./assets/room-v3.webp" width="804" alt="展示台に載った作業部屋のミニチュア。モニターから出た小さな吹き出しの中で、Claude Code が作業している" />
-</p>
-
 <!-- ============================== Connect ==============================
   SNS・連絡先を載せる場合はコメントを外し、YOUR_... を差し替えてください。
 
