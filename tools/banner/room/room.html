@@ -7,6 +7,7 @@
 <style>
 /*
  * README 用「作業部屋のミニチュア」
+ * ・博物館の模型のように展示台に載せ、上下をぼかす（ティルトシフト）ことで、ミニチュア写真のように見せる
  * ・?preview=1 で開くと、ブラウザ上でそのまま動く
  * ・render-room.mjs は window.renderAt(t) で時刻を指定して 1 コマずつ撮影し、ループする WebP にする
  *   （README では JavaScript が動かないため、動きはすべて画像に焼き込む）
@@ -15,23 +16,23 @@
 html, body { margin: 0; background: transparent; }
 .stage { position: relative; width: 804px; height: 380px; border-radius: 18px; overflow: hidden; border: 1px solid rgba(148,163,184,.16); background: #0B1220; }
 svg { display: block; width: 100%; height: 100%; }
-.steam path { stroke-dasharray: 26; animation: steam 3s ease-in-out infinite; }
+.steam path { stroke-dasharray: 22; animation: steam 3s ease-in-out infinite; }
 .steam path:nth-child(2) { animation-delay: -1s; } .steam path:nth-child(3) { animation-delay: -2s; }
-@keyframes steam { 0% { stroke-dashoffset: 26; opacity: 0; } 40% { opacity: .65; } 100% { stroke-dashoffset: -26; opacity: 0; } }
+@keyframes steam { 0% { stroke-dashoffset: 22; opacity: 0; } 40% { opacity: .6; } 100% { stroke-dashoffset: -22; opacity: 0; } }
 .neon { animation: neon 12s steps(1) infinite; }
 @keyframes neon { 0%, 36%, 38.5%, 100% { opacity: 1; } 36.5%, 38% { opacity: .55; } }
 .twinkle { animation: tw 3s steps(1) infinite; }
 @keyframes tw { 50% { opacity: .25; } }
 .plant { animation: sway 6s ease-in-out infinite alternate; }
 @keyframes sway { from { rotate: -3deg; } to { rotate: 3deg; } }
-.blink { animation: blink 1s steps(1) infinite; }
-@keyframes blink { 50% { opacity: 0; } }
-.lead { stroke-dasharray: 3 4; animation: lead 1.2s linear infinite; }
-@keyframes lead { to { stroke-dashoffset: -7; } }
+.cat { animation: breathe 4s ease-in-out infinite; }
+@keyframes breathe { 0%, 100% { transform: scaleY(1); } 50% { transform: scaleY(1.06); } }
+.tail { animation: tail 6s ease-in-out infinite alternate; }
+@keyframes tail { from { rotate: -6deg; } to { rotate: 8deg; } }
 </style>
 </head>
 <body>
-<div class="stage" id="stage"><svg id="room" viewBox="0 0 804 380" role="img" aria-label="作業部屋のミニチュアと Claude Code のターミナル"></svg></div>
+<div class="stage" id="stage"><svg id="room" viewBox="0 0 804 380" role="img" aria-label="展示台に載った作業部屋のミニチュアと、Claude Code の小さな吹き出し"></svg></div>
 <script>
 (() => {
   const LOOP = 12;
@@ -40,117 +41,157 @@ svg { display: block; width: 100%; height: 100%; }
   const el = (tag, a = {}, parent = svg) => { const n = document.createElementNS(NS, tag); for (const k in a) n.setAttribute(k, a[k]); parent.appendChild(n); return n; };
   const txt = (parent, a, s) => { const t = el("text", a, parent); t.textContent = s; return t; };
 
-  // 等角投影：x は右下、y は左下、z は上
-  const s = 22, ox = 340, oy = 172;
+  // 等角投影：x は右下、y は左下、z は上（1 単位 ≒ 実物の 20cm、展示台は 1:24 の想定）
+  const s = 18, ox = 372, oy = 150;
   const P = (x, y, z) => [ox + (x - y) * 0.866 * s, oy + (x + y) * 0.5 * s - z * s];
   const pts = (arr) => arr.map((p) => P(...p).map((v) => v.toFixed(1)).join(",")).join(" ");
   const poly = (parent, arr, fill, extra = {}) => el("polygon", { points: pts(arr), fill, ...extra }, parent);
-  const box = (parent, x0, y0, z0, x1, y1, z1, top, left, right) => {
+  // 箱：見える 3 面＋模型らしい上の縁のハイライト
+  const box = (parent, x0, y0, z0, x1, y1, z1, top, left, right, edge = true) => {
     poly(parent, [[x0, y1, z0], [x1, y1, z0], [x1, y1, z1], [x0, y1, z1]], left);
     poly(parent, [[x1, y0, z0], [x1, y1, z0], [x1, y1, z1], [x1, y0, z1]], right);
     poly(parent, [[x0, y0, z1], [x1, y0, z1], [x1, y1, z1], [x0, y1, z1]], top);
+    if (edge) el("polyline", { points: pts([[x0, y1, z1], [x1, y1, z1], [x1, y0, z1]]), fill: "none", stroke: "#fff", "stroke-opacity": ".22", "stroke-width": ".7" }, parent);
   };
   const mat = (X, Y, a, b) => `matrix(${a},${b},0,1,${X.toFixed(1)},${Y.toFixed(1)})`;
   const onRight = (x, z) => { const [X, Y] = P(x, 0.02, z); return mat(X, Y, 0.866, 0.5); };
   const onLeft = (y, z) => { const [X, Y] = P(0.02, y, z); return mat(X, Y, 0.866, -0.5); };
   const onFront = (x, y, z) => { const [X, Y] = P(x, y, z); return mat(X, Y, 0.866, 0.5); };
+  const k = s / 22;                                                        // 旧サイズ（22）で描いていた小物の縮尺
 
   // ---------- 定義 ----------
   const defs = el("defs");
   const radial = (id, color, op) => { const g = el("radialGradient", { id }, defs); el("stop", { offset: "0", "stop-color": color, "stop-opacity": op }, g); el("stop", { offset: "1", "stop-color": color, "stop-opacity": "0" }, g); };
-  radial("g-lamp", "#FDBA74", ".5"); radial("g-mon", "#38BDF8", ".42"); radial("g-neon", "#D97757", ".55"); radial("g-bg", "#10B981", ".10");
-  const night = el("linearGradient", { id: "g-night", x1: "0", y1: "0", x2: "0", y2: "1" }, defs);
-  el("stop", { offset: "0", "stop-color": "#1A2350" }, night); el("stop", { offset: "1", "stop-color": "#0D1730" }, night);
+  radial("g-lamp", "#FDBA74", ".5"); radial("g-mon", "#38BDF8", ".42"); radial("g-neon", "#D97757", ".55"); radial("g-bg", "#10B981", ".09");
+  const lin = (id, x2, y2, stops) => { const g = el("linearGradient", { id, x1: "0", y1: "0", x2, y2 }, defs); stops.forEach(([o, c, a]) => el("stop", { offset: o, "stop-color": c, "stop-opacity": a ?? 1 }, g)); };
+  lin("g-night", "0", "1", [["0", "#1A2350"], ["1", "#0D1730"]]);
+  lin("g-spot", "0", "1", [["0", "#FFF4E0", ".10"], ["1", "#FFF4E0", "0"]]);
+  lin("g-brass", "1", "1", [["0", "#E9C46A"], [".5", "#B8892F"], ["1", "#8C6420"]]);
+  lin("g-poster", "1", "1", [["0", "#10B981"], [".5", "#0E7490"], ["1", "#1D4ED8"]]);
   const wood = el("radialGradient", { id: "g-wood", cx: ".45", cy: ".4", r: ".7" }, defs);
   el("stop", { offset: "0", "stop-color": "#E6AE6A" }, wood); el("stop", { offset: ".7", "stop-color": "#C27A3A" }, wood); el("stop", { offset: "1", "stop-color": "#8E5126" }, wood);
-  const blur = el("filter", { id: "f-blur", x: "-50%", y: "-50%", width: "200%", height: "200%" }, defs); el("feGaussianBlur", { stdDeviation: "10" }, blur);
+  const blur = el("filter", { id: "f-blur", x: "-50%", y: "-50%", width: "200%", height: "200%" }, defs); el("feGaussianBlur", { stdDeviation: "9" }, blur);
+  const soft = el("filter", { id: "f-soft", x: "-50%", y: "-50%", width: "200%", height: "200%" }, defs); el("feGaussianBlur", { stdDeviation: "3" }, soft);
   const glow = el("filter", { id: "f-glow", x: "-50%", y: "-100%", width: "200%", height: "300%" }, defs);
-  el("feGaussianBlur", { stdDeviation: "2.2", result: "b" }, glow); const mg = el("feMerge", {}, glow); el("feMergeNode", { in: "b" }, mg); el("feMergeNode", { in: "SourceGraphic" }, mg);
+  el("feGaussianBlur", { stdDeviation: "1.8", result: "b" }, glow); const mg = el("feMerge", {}, glow); el("feMergeNode", { in: "b" }, mg); el("feMergeNode", { in: "SourceGraphic" }, mg);
+  // ティルトシフト：上下だけぼかす（色も少しだけ鮮やかに、模型写真の雰囲気）
+  const tilt = el("filter", { id: "f-tilt", x: "-5%", y: "-5%", width: "110%", height: "110%" }, defs);
+  el("feGaussianBlur", { stdDeviation: "2.2" }, tilt);
+  lin("g-tiltmask", "0", "1", [["0", "#fff"], [".12", "#fff"], [".27", "#000"], [".82", "#000"], [".94", "#fff"], ["1", "#fff"]]);
+  const mask = el("mask", { id: "m-tilt", maskUnits: "userSpaceOnUse", x: "0", y: "0", width: "804", height: "380" }, defs);
+  el("rect", { width: 804, height: 380, fill: "url(#g-tiltmask)" }, mask);
+  const tone = el("filter", { id: "f-tone" }, defs); el("feColorMatrix", { type: "saturate", values: "1.12" }, tone);
 
-  // ---------- 背景・見出し ----------
+  // ---------- 背景（展示室） ----------
   el("rect", { width: 804, height: 380, fill: "#0B1220" });
-  el("ellipse", { cx: 360, cy: 190, rx: 320, ry: 200, fill: "url(#g-bg)" });
-  txt(svg, { x: 26, y: 38, fill: "#6EE7B7", "font-family": "JetBrains Mono, monospace", "font-size": 11, "letter-spacing": 3 }, "RAIKA10'S ROOM");
-  const sub = txt(svg, { x: 26, y: 56, fill: "#94A3B8", "font-family": "JetBrains Mono, monospace", "font-size": 9.5 }, "");
-  sub.innerHTML = `<tspan fill="#D97757">✻</tspan> built with Claude Code`;
-  txt(svg, { x: 26, y: 352, fill: "#64748B", "font-family": "JetBrains Mono, monospace", "font-size": 9 }, "LATE-NIGHT CODING · TOKYO");
-  el("ellipse", { cx: ox, cy: 362, rx: 150, ry: 12, fill: "#000", opacity: .5, filter: "url(#f-blur)" });
+  const scene = el("g", { id: "scene", filter: "url(#f-tone)" });
+  el("ellipse", { cx: ox + 10, cy: 200, rx: 330, ry: 210, fill: "url(#g-bg)" }, scene);
+  el("polygon", { points: `${ox - 34},0 ${ox + 34},0 ${ox + 200},380 ${ox - 200},380`, fill: "url(#g-spot)", style: "mix-blend-mode:screen" }, scene);
+  // 展示台の影
+  el("ellipse", { cx: ox, cy: 322, rx: 150, ry: 16, fill: "#000", opacity: .45, filter: "url(#f-blur)" }, scene);
 
-  const room = el("g");
+  const room = el("g", {}, scene);
 
-  // ---------- 台座・床・壁 ----------
-  box(room, 0, 0, -0.6, 8, 8, 0, "#18263F", "#0E1729", "#121D33");
+  // ---------- 展示台・銘板 ----------
+  box(room, -0.6, -0.6, -1.4, 8.6, 8.6, -0.6, "#1B2335", "#121826", "#161D2E");
+  poly(room, [[-0.6, 8.6, -0.62], [8.6, 8.6, -0.62], [8.6, 8.6, -0.6], [-0.6, 8.6, -0.6]], "#B8892F", { opacity: ".7" });
+  poly(room, [[8.6, -0.6, -0.62], [8.6, 8.6, -0.62], [8.6, 8.6, -0.6], [8.6, -0.6, -0.6]], "#B8892F", { opacity: ".5" });
+  poly(room, [[1.6, 8.61, -0.78], [5.6, 8.61, -0.78], [5.6, 8.61, -1.22], [1.6, 8.61, -1.22]], "url(#g-brass)");
+  const plate = el("g", { transform: onFront(1.75, 8.62, -0.84) }, room);
+  txt(plate, { x: 0, y: 5.2, fill: "#3A2A0E", "font-family": "JetBrains Mono, monospace", "font-size": 4.6, "font-weight": 700, "letter-spacing": .6 }, "RAIKA10'S ROOM · 1:24 SCALE");
+
+  // ---------- 床・壁 ----------
+  box(room, 0, 0, -0.6, 8, 8, 0, "#18263F", "#0E1729", "#121D33", false);
   poly(room, [[0, 0, 0], [8, 0, 0], [8, 0, 6.6], [0, 0, 6.6]], "#14223A");
   poly(room, [[0, 0, 0], [0, 8, 0], [0, 8, 6.6], [0, 0, 6.6]], "#101C31");
   poly(room, [[0, -0.3, 6.6], [8, -0.3, 6.6], [8, 0, 6.6], [0, 0, 6.6]], "#26375A");
   poly(room, [[-0.3, -0.3, 6.6], [0, -0.3, 6.6], [0, 8, 6.6], [-0.3, 8, 6.6]], "#26375A");
   poly(room, [[8, -0.3, -0.6], [8, 0, -0.6], [8, 0, 6.6], [8, -0.3, 6.6]], "#0C1526");
   poly(room, [[-0.3, 8, -0.6], [0, 8, -0.6], [0, 8, 6.6], [-0.3, 8, 6.6]], "#0A1322");
-  for (let i = 1; i < 8; i++) el("polyline", { points: pts([[i, 0, 0], [i, 8, 0]]), stroke: "#1E2E4A", "stroke-width": .8, fill: "none" }, room);
-  poly(room, [[1.0, 3.0, .01], [6.8, 3.0, .01], [6.8, 7.4, .01], [1.0, 7.4, .01]], "#10B981", { opacity: ".14" });
-  poly(room, [[1.3, 3.3, .02], [6.5, 3.3, .02], [6.5, 7.1, .02], [1.3, 7.1, .02]], "none", { stroke: "#6EE7B7", "stroke-opacity": ".25", "stroke-width": 1 });
+  for (let i = 1; i < 8; i++) el("polyline", { points: pts([[i, 0, 0], [i, 8, 0]]), stroke: "#1E2E4A", "stroke-width": .7, fill: "none" }, room);
+  // 幅木
+  poly(room, [[0, 0.02, 0], [8, 0.02, 0], [8, 0.02, 0.25], [0, 0.02, 0.25]], "#1D2D49");
+  poly(room, [[0.02, 0, 0], [0.02, 8, 0], [0.02, 8, 0.25], [0.02, 0, 0.25]], "#182641");
+  // ラグ（縁取りと細いストライプ）
+  poly(room, [[1.0, 3.0, .01], [6.8, 3.0, .01], [6.8, 7.4, .01], [1.0, 7.4, .01]], "#0F5E4A", { opacity: ".55" });
+  poly(room, [[1.3, 3.3, .02], [6.5, 3.3, .02], [6.5, 7.1, .02], [1.3, 7.1, .02]], "none", { stroke: "#6EE7B7", "stroke-opacity": ".35", "stroke-width": .8 });
+  for (let i = 0; i < 5; i++) { const y = 3.9 + i * 0.7; el("polyline", { points: pts([[1.5, y, .02], [6.3, y, .02]]), stroke: "#6EE7B7", "stroke-opacity": ".12", "stroke-width": .8, fill: "none" }, room); }
 
   // ---------- 左の壁：窓・本棚・ネオン ----------
-  poly(room, [[0, 4.4, 5.6], [0, 7.3, 5.6], [0, 7.3, 2.8], [0, 4.4, 2.8]], "url(#g-night)", { stroke: "#2C3E5E", "stroke-width": 2.2 });
-  const city = el("g", { transform: onLeft(7.25, 3.9) }, room);
+  poly(room, [[0, 4.4, 5.6], [0, 7.3, 5.6], [0, 7.3, 2.8], [0, 4.4, 2.8]], "url(#g-night)", { stroke: "#2C3E5E", "stroke-width": 1.8 });
+  el("polyline", { points: pts([[0.01, 5.85, 5.6], [0.01, 5.85, 2.8]]), stroke: "#2C3E5E", "stroke-width": 1.2, fill: "none" }, room);   // 窓の桟
+  const city = el("g", { transform: `${onLeft(7.25, 3.9)} scale(${k})` }, room);
   [[4, 10, 8], [14, 6, 12], [22, 12, 6], [34, 4, 14], [44, 9, 9], [54, 5, 13]].forEach(([x, w, h]) => el("rect", { x, y: 18 - h, width: w, height: h + 6, fill: "#0A1226" }, city));
   [[6, 14], [16, 9], [24, 12], [36, 6], [46, 13], [56, 9], [17, 15]].forEach(([x, y], i) => el("rect", { x, y, width: 1.6, height: 1.6, fill: i % 2 ? "#6EE7B7" : "#38BDF8", class: "twinkle", style: `animation-delay:${-i * .5}s` }, city));
-  const sky = el("g", { transform: onLeft(7.25, 5.5) }, room);
+  const sky = el("g", { transform: `${onLeft(7.25, 5.5)} scale(${k})` }, room);
   el("path", { d: "M50 10 a6 6 0 1 0 6 -8 a4.6 4.6 0 1 1 -6 8 z", fill: "#F4F1D0" }, sky);
-  [[10, 6], [24, 12], [36, 4]].forEach(([x, y], i) => el("rect", { x, y, width: 1.4, height: 1.4, fill: "#F8FAFC", class: "twinkle", style: `animation-delay:${-i * 1}s` }, sky));
+  [[10, 6], [24, 12], [36, 4]].forEach(([x, y], i) => el("rect", { x, y, width: 1.4, height: 1.4, fill: "#F8FAFC", class: "twinkle", style: `animation-delay:${-i}s` }, sky));
   box(room, 0, 0.9, 3.8, 0.7, 3.7, 3.95, "#33476A", "#22314C", "#2A3B58");
   let by = 1.0;
   [["#4C8FE0", .9, .34], ["#8B6FE8", .85, .34], ["#E8D44D", .75, .28], ["#C2853A", .8, .26], ["#3D6FB0", .65, .22], ["#6B57BF", .7, .22]].forEach(([c, h, w]) => {
-    box(room, 0.05, by, 3.95, 0.55, by + w, 3.95 + h, c, c, c);
+    box(room, 0.05, by, 3.95, 0.55, by + w, 3.95 + h, c, c, c, false);
     poly(room, [[0.05, by + w, 3.95], [0.55, by + w, 3.95], [0.55, by + w, 3.95 + h], [0.05, by + w, 3.95 + h]], "#000", { opacity: ".25" });
     by += w + 0.03;
   });
-  el("ellipse", { cx: P(0, 2.4, 5.4)[0], cy: P(0, 2.4, 5.4)[1], rx: 62, ry: 40, fill: "url(#g-neon)", style: "mix-blend-mode:screen" }, room);
-  const neon = el("g", { transform: onLeft(3.55, 5.25), class: "neon", filter: "url(#f-glow)" }, room);
+  el("ellipse", { cx: P(0, 2.4, 5.4)[0], cy: P(0, 2.4, 5.4)[1], rx: 52, ry: 34, fill: "url(#g-neon)", style: "mix-blend-mode:screen" }, room);
+  const neon = el("g", { transform: `${onLeft(3.55, 5.25)} scale(${k})`, class: "neon", filter: "url(#f-glow)" }, room);
   txt(neon, { x: 0, y: 0, fill: "#F2A385", "font-family": "JetBrains Mono, monospace", "font-size": 11, "font-weight": 700 }, "✻ thinking…");
 
-  // ---------- 右の壁：時計（夜 23:40） ----------
-  const clock = el("g", { transform: onRight(7.0, 5.3) }, room);
-  el("circle", { cx: 0, cy: 0, r: 11, fill: "#0B1220", stroke: "#94A3B8", "stroke-width": 1.6 }, clock);
-  for (let i = 0; i < 12; i++) { const a = i * Math.PI / 6; el("line", { x1: Math.sin(a) * 8.5, y1: -Math.cos(a) * 8.5, x2: Math.sin(a) * 10, y2: -Math.cos(a) * 10, stroke: "#64748B", "stroke-width": 1 }, clock); }
-  el("line", { x1: 0, y1: 0, x2: 0, y2: -5.5, stroke: "#E8EEF6", "stroke-width": 1.8, "stroke-linecap": "round", transform: `rotate(${(11 + 40 / 60) * 30})` }, clock);
-  el("line", { x1: 0, y1: 0, x2: 0, y2: -8.5, stroke: "#6EE7B7", "stroke-width": 1.2, "stroke-linecap": "round", transform: `rotate(${40 * 6})` }, clock);
+  // ---------- 右の壁：ポスター（ヘッダーの絵） ----------
+  const poster = el("g", { transform: onRight(6.25, 4.7) }, room);
+  el("rect", { x: -1.2, y: -1.2, width: 28.4, height: 21.4, fill: "#E8EEF6" }, poster);
+  el("rect", { x: 0, y: 0, width: 26, height: 19, fill: "url(#g-poster)" }, poster);
+  el("rect", { x: 0, y: 0, width: 26, height: 19, fill: "#0B1220", opacity: .35 }, poster);
+  txt(poster, { x: 13, y: 11.5, fill: "#F8FAFC", "font-family": "Inter, sans-serif", "font-size": 4.4, "font-weight": 800, "text-anchor": "middle" }, "Hello, World!");
 
   // ---------- 机・モニター ----------
   box(room, 0.8, 0, 3.6, 6.6, 2.4, 3.9, "#2E4163", "#1F2D47", "#26375A");
-  [[0.95, 2.1], [4.9, 2.1]].forEach(([x, y]) => box(room, x, y, 0, x + 0.22, y + 0.22, 3.6, "#2E4163", "#1A263D", "#22314C"));
+  [[0.95, 2.1], [4.9, 2.1]].forEach(([x, y]) => box(room, x, y, 0, x + 0.22, y + 0.22, 3.6, "#2E4163", "#1A263D", "#22314C", false));
   box(room, 5.2, 0.2, 0, 6.4, 2.2, 3.6, "#2E4163", "#1C2942", "#24344F");
   poly(room, [[5.25, 2.2, 2.4], [6.35, 2.2, 2.4], [6.35, 2.2, 2.45], [5.25, 2.2, 2.45]], "#3B5078");
-  el("ellipse", { cx: P(3.5, 0.6, 4.6)[0], cy: P(3.5, 0.6, 4.6)[1], rx: 95, ry: 55, fill: "url(#g-mon)", style: "mix-blend-mode:screen" }, room);
+  poly(room, [[5.25, 2.2, 1.2], [6.35, 2.2, 1.2], [6.35, 2.2, 1.25], [5.25, 2.2, 1.25]], "#3B5078");
+  el("ellipse", { cx: P(3.5, 0.6, 4.6)[0], cy: P(3.5, 0.6, 4.6)[1], rx: 80, ry: 46, fill: "url(#g-mon)", style: "mix-blend-mode:screen" }, room);
   box(room, 3.2, 0.5, 3.9, 3.8, 0.9, 4.35, "#334155", "#1E293B", "#273449");
   box(room, 1.3, 0.25, 4.35, 5.7, 0.55, 6.25, "#334155", "#0F172A", "#1E293B");
   poly(room, [[1.42, 0.56, 6.13], [5.58, 0.56, 6.13], [5.58, 0.56, 4.47], [1.42, 0.56, 4.47]], "#060D18");
-  const scr = el("g", { transform: onFront(1.5, 0.57, 6.06), "font-family": "JetBrains Mono, monospace" }, room);
+  const scr = el("g", { transform: `${onFront(1.5, 0.57, 6.06)} scale(${k})`, "font-family": "JetBrains Mono, monospace" }, room);
   el("rect", { x: 2, y: 2, width: 34, height: 7, rx: 1.5, fill: "none", stroke: "#D97757", "stroke-width": .7 }, scr);
   txt(scr, { x: 4.5, y: 7.2, fill: "#D97757", "font-size": 4.6 }, "✻ Claude Code");
   [[12.5, 40, "#E8EEF6"], [17.5, 28, "#6EE7B7"], [22.5, 52, "#94A3B8"], [27.5, 34, "#6EE7B7"]].forEach(([y, w, c]) => el("rect", { x: 3, y, width: w, height: 1.6, rx: .8, fill: c, opacity: .8 }, scr));
   const miniSpin = txt(scr, { x: 3, y: 34.5, fill: "#D97757", "font-size": 5.2 }, "✻");
   const miniWord = txt(scr, { x: 9, y: 34.5, fill: "#D97757", "font-size": 4.4 }, "Brewing…");
   box(room, 2.4, 1.3, 3.9, 4.6, 1.95, 3.98, "#CBD5E1", "#94A3B8", "#A8B3C2");
-  // マグカップ：クリーム色にエメラルドの細いライン 1 本
+  // マグカップ：クリーム色にエメラルドの細いライン
   box(room, 5.0, 1.15, 3.9, 5.5, 1.65, 4.55, "#EFE9DE", "#CFC6B6", "#DED6C8");
   poly(room, [[5.0, 1.65, 4.3], [5.5, 1.65, 4.3], [5.5, 1.65, 4.37], [5.0, 1.65, 4.37]], "#10B981");
   poly(room, [[5.5, 1.15, 4.3], [5.5, 1.65, 4.3], [5.5, 1.65, 4.37], [5.5, 1.15, 4.37]], "#0E9F6E");
-  poly(room, [[5.06, 1.21, 4.55], [5.44, 1.21, 4.55], [5.44, 1.59, 4.55], [5.06, 1.59, 4.55]], "#3B2414");   // 中のコーヒー
-  const steam = el("g", { class: "steam", fill: "none", stroke: "#CBD5E1", "stroke-width": 1.3, "stroke-linecap": "round" }, room);
+  poly(room, [[5.06, 1.21, 4.55], [5.44, 1.21, 4.55], [5.44, 1.59, 4.55], [5.06, 1.59, 4.55]], "#3B2414");
+  const steam = el("g", { class: "steam", fill: "none", stroke: "#CBD5E1", "stroke-width": 1.1, "stroke-linecap": "round" }, room);
   const [mx, my] = P(5.25, 1.4, 4.6);
-  [-3, 0, 3].forEach((dx) => el("path", { d: `M${mx + dx} ${my} q -3 -6 0 -11 q 3 -6 0 -11`, opacity: 0 }, steam));
+  [-2.5, 0, 2.5].forEach((dx) => el("path", { d: `M${mx + dx} ${my} q -2.5 -5 0 -9 q 2.5 -5 0 -9`, opacity: 0 }, steam));
 
   // ---------- 椅子 ----------
-  box(room, 3.0, 3.85, 0, 3.25, 4.1, 1.8, "#334155", "#1E293B", "#273449");
+  el("ellipse", { cx: P(3.2, 4.1, 0)[0], cy: P(3.2, 4.1, 0)[1], rx: 22, ry: 8, fill: "#000", opacity: .3, filter: "url(#f-soft)" }, room);
+  box(room, 3.0, 3.85, 0, 3.25, 4.1, 1.8, "#334155", "#1E293B", "#273449", false);
   box(room, 2.3, 3.1, 1.8, 4.1, 4.9, 2.15, "#14B88A", "#0B6B50", "#0E8A65");
   box(room, 2.3, 4.9, 2.15, 4.1, 5.2, 4.3, "#14B88A", "#0B6B50", "#0E8A65");
 
+  // ---------- 猫（ラグの上で丸くなって寝ている） ----------
+  const [cx0, cy0] = P(4.9, 6.3, 0.02);
+  el("ellipse", { cx: cx0, cy: cy0 + 2, rx: 15, ry: 5, fill: "#000", opacity: .35, filter: "url(#f-soft)" }, room);
+  const cat = el("g", { class: "cat", style: `transform-origin:${cx0}px ${cy0}px` }, room);
+  el("path", { class: "tail", style: `transform-origin:${cx0 + 10}px ${cy0 - 2}px`, d: `M${cx0 + 10} ${cy0 - 2} q 9 2 6 -6 q -2 -4 -6 -3`, fill: "none", stroke: "#6B7280", "stroke-width": 3.4, "stroke-linecap": "round" }, cat);
+  el("ellipse", { cx: cx0, cy: cy0 - 4, rx: 12.5, ry: 7.5, fill: "#6B7280" }, cat);
+  el("ellipse", { cx: cx0 - 1, cy: cy0 - 6.5, rx: 8, ry: 3.2, fill: "#9CA3AF", opacity: .7 }, cat);
+  el("circle", { cx: cx0 - 10, cy: cy0 - 5, r: 5.2, fill: "#6B7280" }, cat);
+  el("path", { d: `M${cx0 - 14} ${cy0 - 8} l 1 -5 l 3 4 Z M${cx0 - 9} ${cy0 - 9.5} l 2 -4.6 l 2 4.6 Z`, fill: "#6B7280" }, cat);
+  el("path", { d: `M${cx0 - 12.5} ${cy0 - 4.5} q 1 .8 2 0 M${cx0 - 9} ${cy0 - 4.8} q 1 .8 2 0`, fill: "none", stroke: "#1F2937", "stroke-width": .6 }, cat);
+
   // ---------- ギター ----------
   const [gsx, gsy] = P(1.75, 6.65, 0);
-  el("ellipse", { cx: gsx, cy: gsy, rx: 22, ry: 7, fill: "#000", opacity: .35, filter: "url(#f-blur)" }, room);
+  el("ellipse", { cx: gsx, cy: gsy, rx: 18, ry: 6, fill: "#000", opacity: .35, filter: "url(#f-blur)" }, room);
   const [gx, gy] = P(1.0, 6.6, 4.3);
-  const gtr = el("g", { transform: `${mat(gx, gy, 0.866, 0.5)} rotate(-7 17 94)` }, room);
+  const gtr = el("g", { transform: `${mat(gx, gy, 0.866, 0.5)} scale(${k}) rotate(-7 17 94)` }, room);
   el("path", { d: "M8 92 L2 100 M26 92 L32 100", stroke: "#334155", "stroke-width": 2, "stroke-linecap": "round" }, gtr);
   el("path", { d: "M12 2 Q17 -1 22 2 L21 15 L13 15 Z", fill: "#3B2414" }, gtr);
   [4, 8, 12].forEach((y) => { el("rect", { x: 10, y, width: 2.4, height: 1.6, rx: .6, fill: "#CBD5E1" }, gtr); el("rect", { x: 21.6, y, width: 2.4, height: 1.6, rx: .6, fill: "#CBD5E1" }, gtr); });
@@ -166,34 +207,44 @@ svg { display: block; width: 100%; height: 100%; }
   [15.6, 17, 18.4].forEach((x) => el("line", { x1: x, y1: 3, x2: x, y2: 86, stroke: "#EDE3C8", "stroke-width": .45, opacity: .85 }, gtr));
 
   // ---------- 観葉植物 ----------
+  el("ellipse", { cx: P(7.3, 0.8, 0)[0], cy: P(7.3, 0.8, 0)[1] + 2, rx: 12, ry: 4, fill: "#000", opacity: .3, filter: "url(#f-soft)" }, room);
   box(room, 6.9, 0.4, 0, 7.7, 1.2, 1.0, "#C2853A", "#94622A", "#A87132");
   const [px, py] = P(7.3, 0.8, 1.0);
   const plant = el("g", { class: "plant", style: `transform-origin:${px}px ${py}px` }, room);
   [[-34, 0, 15], [-12, -2, 18], [10, -1, 19], [32, 1, 15], [-22, 4, 12], [22, 4, 12]].forEach(([rot, lift, len], i) =>
-    el("ellipse", { cx: px, cy: py - len + lift, rx: 4.6, ry: len, fill: i % 2 ? "#10B981" : "#0E8A62", transform: `rotate(${rot} ${px} ${py})` }, plant));
+    el("ellipse", { cx: px, cy: py - len * k + lift * k, rx: 4.6 * k, ry: len * k, fill: i % 2 ? "#10B981" : "#0E8A62", transform: `rotate(${rot} ${px} ${py})` }, plant));
 
   // ---------- フロアランプ ----------
   const [lb1, lb2] = [P(0.9, 7.0, 0), P(0.9, 7.0, 5.0)];
-  el("ellipse", { cx: lb2[0], cy: lb2[1] + 30, rx: 120, ry: 90, fill: "url(#g-lamp)", style: "mix-blend-mode:screen" }, room);
-  el("line", { x1: lb1[0], y1: lb1[1], x2: lb2[0], y2: lb2[1], stroke: "#94A3B8", "stroke-width": 2 }, room);
-  el("ellipse", { cx: lb1[0], cy: lb1[1], rx: 9, ry: 4.5, fill: "#334155" }, room);
-  el("path", { d: `M${lb2[0] - 15} ${lb2[1] + 9} L${lb2[0] - 9} ${lb2[1] - 7} L${lb2[0] + 9} ${lb2[1] - 7} L${lb2[0] + 15} ${lb2[1] + 9} Z`, fill: "#FCD9A8" }, room);
+  el("ellipse", { cx: lb2[0], cy: lb2[1] + 26, rx: 100, ry: 76, fill: "url(#g-lamp)", style: "mix-blend-mode:screen" }, room);
+  el("line", { x1: lb1[0], y1: lb1[1], x2: lb2[0], y2: lb2[1], stroke: "#94A3B8", "stroke-width": 1.6 }, room);
+  el("ellipse", { cx: lb1[0], cy: lb1[1], rx: 7.5, ry: 3.8, fill: "#334155" }, room);
+  el("path", { d: `M${lb2[0] - 12} ${lb2[1] + 7} L${lb2[0] - 7} ${lb2[1] - 6} L${lb2[0] + 7} ${lb2[1] - 6} L${lb2[0] + 12} ${lb2[1] + 7} Z`, fill: "#FCD9A8" }, room);
 
-  // ---------- モニターから出る小さな吹き出し（Claude Code） ----------
-  // ミニチュアの縮尺に合わせ、モニターのすぐ右上に小さく浮かべる
-  const BX = 488, BY = 38, BW = 170, BH = 84;
-  const [tx, ty] = P(5.62, 0.42, 5.75);                        // しっぽの先（モニターの右上）
+  // ティルトシフト：シーン全体のぼかしたコピーを、上下だけに重ねる
+  el("use", { href: "#scene", filter: "url(#f-tilt)", mask: "url(#m-tilt)" });
+
+  // ---------- 見出し（ぼかさない） ----------
+  txt(svg, { x: 26, y: 38, fill: "#6EE7B7", "font-family": "JetBrains Mono, monospace", "font-size": 11, "letter-spacing": 3 }, "RAIKA10'S ROOM");
+  const sub = txt(svg, { x: 26, y: 56, fill: "#94A3B8", "font-family": "JetBrains Mono, monospace", "font-size": 9.5 }, "");
+  sub.innerHTML = `<tspan fill="#D97757">✻</tspan> built with Claude Code`;
+  txt(svg, { x: 26, y: 352, fill: "#64748B", "font-family": "JetBrains Mono, monospace", "font-size": 9 }, "LATE-NIGHT CODING · TOKYO");
+
+  // ---------- モニターから出る小さな吹き出し（ぼかさない） ----------
+  const BX = 500, BY = 40, BW = 158, BH = 78;
+  const [tx, ty] = P(5.62, 0.42, 5.75);
   const bubble = el("g", { "font-family": "JetBrains Mono, Noto Sans JP, monospace" });
-  el("path", { d: `M${BX + 2} ${BY + 46} L${tx + 6} ${ty} L${BX + 2} ${BY + 60} Z`, fill: "#0B1424", stroke: "#2A3A55", "stroke-width": 1 }, bubble);
+  el("rect", { x: BX + 3, y: BY + 5, width: BW, height: BH, rx: 10, fill: "#000", opacity: .35, filter: "url(#f-soft)" }, bubble);
+  el("path", { d: `M${BX + 2} ${BY + 42} L${tx + 5} ${ty} L${BX + 2} ${BY + 55} Z`, fill: "#0B1424", stroke: "#2A3A55", "stroke-width": 1 }, bubble);
   el("rect", { x: BX, y: BY, width: BW, height: BH, rx: 10, fill: "#0B1424", stroke: "#2A3A55", "stroke-width": 1 }, bubble);
-  el("rect", { x: BX + 1, y: BY + 44, width: 3, height: 18, fill: "#0B1424" }, bubble);   // しっぽとの継ぎ目を隠す
-  el("rect", { x: BX + 12, y: BY, width: 46, height: 1.6, rx: .8, fill: "#D97757" }, bubble);
-  const head = txt(bubble, { x: BX + 12, y: BY + 18, "font-size": 8.5, fill: "#E8EEF6", "font-weight": 700 }, "");
+  el("rect", { x: BX + 1, y: BY + 40, width: 3, height: 17, fill: "#0B1424" }, bubble);
+  el("rect", { x: BX + 12, y: BY, width: 40, height: 1.6, rx: .8, fill: "#D97757" }, bubble);
+  const head = txt(bubble, { x: BX + 12, y: BY + 17, "font-size": 8, fill: "#E8EEF6", "font-weight": 700 }, "");
   head.innerHTML = `<tspan fill="#D97757">✻</tspan> Claude Code`;
-  const prompt = txt(bubble, { x: BX + 12, y: BY + 36, "font-size": 8, fill: "#CBD5E1" }, "");
-  const tool = txt(bubble, { x: BX + 12, y: BY + 53, "font-size": 8, fill: "#CBD5E1" }, "");
+  const prompt = txt(bubble, { x: BX + 12, y: BY + 33, "font-size": 7.5, fill: "#CBD5E1" }, "");
+  const tool = txt(bubble, { x: BX + 12, y: BY + 49, "font-size": 7.5, fill: "#CBD5E1" }, "");
   tool.innerHTML = `<tspan fill="#6EE7B7">⏺</tspan> Write(<tspan fill="#E8EEF6">room.html</tspan>)`;
-  const status = txt(bubble, { x: BX + 12, y: BY + 70, "font-size": 8, fill: "#D97757" }, "");
+  const status = txt(bubble, { x: BX + 12, y: BY + 65, "font-size": 7.5, fill: "#D97757" }, "");
 
   // ---------- 時刻 t（秒）の状態を描く ----------
   const ASK = "部屋をおしゃれにして";

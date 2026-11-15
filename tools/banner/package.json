@@ -6,7 +6,7 @@
   "scripts": {
     "preview": "start fluid.html?preview=1",
     "preview:room": "start room/room.html?preview=1",
-    "build:room": "node room/render-room.mjs ../../assets/room-v2.webp 12 1.5 82",
+    "build:room": "node room/render-room.mjs ../../assets/room-v3.webp 12 1.5 82",
     "build": "node render.mjs 20 16 402 150 && python encode.py 20 90 && node embed.mjs ../../assets/banner-v8.svg ../../assets/banner-v8.svg",
     "build:mobile": "node overlay-anim.mjs ../../assets/banner-v8.svg 12 20 1.25 --calm && python compose.py ../../assets/banner-mobile-v4.webp 12 80 card"
   },
