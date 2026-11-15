@@ -34,7 +34,7 @@
   作業部屋のミニチュア（Claude Code と一緒に作業中）。tools/banner で npm run build:room を実行すると作り直せます
 -->
 <p align="center">
-  <img src="./assets/room-v1.webp" width="804" alt="作業部屋のミニチュア。机のモニターから伸びた吹き出しの中で、Claude Code が作業している" />
+  <img src="./assets/room-v2.webp" width="804" alt="作業部屋のミニチュア。机のモニターから伸びた吹き出しの中で、Claude Code が作業している" />
 </p>
 
 <!-- ============================== Connect ==============================
