@@ -6,7 +6,7 @@
 <p align="center">
   <picture>
     <source media="(min-width: 768px)" srcset="https://github.com/raika10/raika10/raw/main/assets/banner-v8.svg" />
-    <img src="./assets/banner-mobile-v2.webp" width="804" alt="Hello, World!" />
+    <img src="./assets/banner-mobile-v3.webp" width="804" alt="Hello, World!" />
   </picture>
 </p>
 

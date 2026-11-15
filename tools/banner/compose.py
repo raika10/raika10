@@ -45,6 +45,7 @@ frames[0].save(
     duration=round(1000 / fps),
     loop=0,
     quality=quality,
-    method=4,
+    method=6,             # 圧縮に時間をかけて小さく
+    # minimize_size は差分の重ね合わせでブロック状の粗さが溜まるため使わない
 )
 print(f"{len(frames)} frames {W}x{H} -> {out} ({out.stat().st_size / 1024:.0f} KB)")
