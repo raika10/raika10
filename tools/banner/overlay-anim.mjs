@@ -12,7 +12,9 @@ import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
-const [input, fpsArg, secArg, scaleArg] = process.argv.slice(2);
+const [input, fpsArg, secArg, scaleArg] = process.argv.slice(2).filter((a) => !a.startsWith("--"));
+// --calm：線の束の伸び縮みを止める（画面の横幅いっぱいが毎コマ変わるのを防ぎ、画像を軽くする）
+const CALM = process.argv.includes("--calm");
 const FPS = Number(fpsArg || 15), SECONDS = Number(secArg || 20), SCALE = Number(scaleArg || 1.5);
 const N = FPS * SECONDS;
 const W = Math.round(804 * SCALE), H = Math.round(300 * SCALE);
@@ -27,13 +29,16 @@ const cutBetween = (start, end) => {
 cutBetween("  <!-- fluid:start", "<!-- fluid:end -->\n");
 svg = svg.replace('  <rect width="804" height="300" fill="#0B1220"/>\n', "");
 svg = svg.replace(/^<svg /, `<svg id="banner" style="width:${W}px;height:${H}px;display:block" `);
+// --calm では「README.md」の点の波紋も止める（上下の離れた場所が同時に変わると、
+// 各コマで保存する範囲が画面ほぼ全体になってしまうため）
+if (CALM) svg = svg.replace(/<circle cx="361" cy="58" r="3.5" fill="none"[^>]*>[\s\S]*?<\/circle>/, "");
 
 const outDir = path.join(here, ".cache", "overlay-frames");
 await rm(outDir, { recursive: true, force: true });
 await mkdir(outDir, { recursive: true });
 const html = path.join(here, ".cache", "overlay-anim.html");
 await writeFile(html, `<!doctype html><html><head><style>html,body{margin:0;background:transparent}
-.sway{animation-duration:${SECONDS / 2}s!important}</style></head><body>${svg}</body></html>`);
+${CALM ? ".sway{animation:none!important}" : `.sway{animation-duration:${SECONDS / 2}s!important}`}</style></head><body>${svg}</body></html>`);
 
 const browser = await chromium.launch({ channel: "msedge" });
 const page = await browser.newPage({ viewport: { width: W, height: H } });
