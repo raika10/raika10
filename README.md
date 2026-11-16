@@ -1,3 +1,14 @@
+<!-- ============================= Menu Bar =============================
+  Mac のメニューバー風ステータス（作業中のリポジトリ・日時）
+  .github/workflows/menubar.yml が毎時間作り直し、status ブランチに置きます
+-->
+<p align="center">
+  <picture>
+    <source media="(min-width: 768px)" srcset="https://github.com/raika10/raika10/raw/status/menubar.svg" />
+    <img src="https://github.com/raika10/raika10/raw/status/menubar-mobile.svg" width="804" alt="raika10 menu bar" />
+  </picture>
+</p>
+
 <!-- ============================== Header ==============================
   画面幅 768px 以上（PC）：カットインなどの演出つきの SVG
   それ以外（スマホ・GitHub アプリ）：軽く再生できるアニメーション WebP
