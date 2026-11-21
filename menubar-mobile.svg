@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="56" viewBox="0 0 420 56" role="img" aria-label="raika10 のメニューバー：EVC · 6 日前・17:12">
+<defs>
+  <linearGradient id="mb-bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#132036"/><stop offset="1" stop-color="#0D1626"/></linearGradient>
+  <radialGradient id="mb-a" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(50.4 28) scale(134.4 112)"><stop offset="0" stop-color="#10B981" stop-opacity=".22"/><stop offset="1" stop-color="#10B981" stop-opacity="0"/></radialGradient>
+  <radialGradient id="mb-b" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(361.2 28) scale(126 112)"><stop offset="0" stop-color="#38BDF8" stop-opacity=".18"/><stop offset="1" stop-color="#38BDF8" stop-opacity="0"/></radialGradient>
+  <linearGradient id="mb-logo" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#10B981"/><stop offset="1" stop-color="#38BDF8"/></linearGradient>
+  <clipPath id="mb-clip"><rect width="420" height="56" rx="14"/></clipPath>
+</defs>
+<style>
+  .sans{font-family:'Inter','Segoe UI',-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic','Helvetica Neue',Arial,sans-serif}
+  .ping{transform-box:fill-box;transform-origin:center;animation:ping 2.4s ease-out infinite}
+  @keyframes ping{0%{transform:scale(1);opacity:.7}100%{transform:scale(2.6);opacity:0}}
+  .spark text{opacity:0;animation:spark 1.2s steps(1) infinite}
+  @keyframes spark{0%{opacity:1}16.6%,100%{opacity:0}}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important}.spark text:first-child{opacity:1}}
+</style>
+<g clip-path="url(#mb-clip)">
+  <rect width="420" height="56" fill="url(#mb-bg)"/>
+  <rect width="420" height="56" fill="url(#mb-a)"/>
+  <rect width="420" height="56" fill="url(#mb-b)"/>
+  <rect width="420" height="1" fill="#FFFFFF" fill-opacity=".07"/>
+</g>
+<rect x=".5" y=".5" width="419" height="55" rx="13.5" fill="none" stroke="#94A3B8" stroke-opacity=".16"/>
+<g class="sans" font-size="15">
+  <rect x="16" y="15" width="26" height="26" rx="7.280000000000001" fill="url(#mb-logo)"/>
+<text class="sans" x="29" y="33.72" text-anchor="middle" font-size="15.079999999999998" font-weight="900" fill="#04120D">R</text>
+  <text x="52.0" y="34" text-anchor="start" textLength="52.3" lengthAdjust="spacing" font-weight="700" fill="#F1F5F9">raika10</text>
+  <circle class="ping" cx="230.45" cy="29" r="3.8" fill="#10B981"/><circle cx="230.45" cy="29" r="3.8" fill="#10B981"/>
+  <text x="324.7" y="34" text-anchor="end" textLength="83.3" lengthAdjust="spacing" fill="#E2E8F0">EVC · 6 日前</text>
+  <g class="spark" fill="#F2A385" font-size="15"><text x="352.2" y="34" text-anchor="end" style="animation-delay:0.0s">✢</text><text x="352.2" y="34" text-anchor="end" style="animation-delay:0.2s">✶</text><text x="352.2" y="34" text-anchor="end" style="animation-delay:0.4s">✻</text><text x="352.2" y="34" text-anchor="end" style="animation-delay:0.6s">✽</text><text x="352.2" y="34" text-anchor="end" style="animation-delay:0.8s">✻</text><text x="352.2" y="34" text-anchor="end" style="animation-delay:1.0s">✶</text></g>
+  <text x="402.0" y="34" text-anchor="end" textLength="37.8" lengthAdjust="spacing" fill="#F1F5F9">17:12</text>
+</g>
+</svg>
