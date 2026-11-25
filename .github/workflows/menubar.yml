@@ -2,7 +2,8 @@ name: Menu Bar
 
 on:
   schedule:
-    - cron: "5 * * * *" # 毎時 5 分
+    # 30 分ごと（毎時 7 分・37 分）。GitHub が混む毎時 0 分を避けても、間引かれて数時間あくことがある
+    - cron: "7,37 * * * *"
   workflow_dispatch: # Actions タブから手動実行
   push:
     branches: [main]

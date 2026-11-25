@@ -1,6 +1,7 @@
 <!-- ============================= Menu Bar =============================
   Mac のメニューバー風ステータス（作業中のリポジトリ・日時）
-  .github/workflows/menubar.yml が毎時間作り直し、status ブランチに置きます
+  .github/workflows/menubar.yml が 30 分ごとに作り直し、status ブランチに置きます
+  （GitHub の混雑で遅れることがあるので、時刻は「更新」日時として表示）
 -->
 <p align="center">
   <picture>
