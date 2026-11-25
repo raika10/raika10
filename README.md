@@ -1,45 +1,13 @@
-<!-- ============================ Claude Walk ============================
-  紺のバーの中を Claude（ドット絵）が左から右へ歩きます
-  PC：claude-walk-v1.svg ／ スマホ・GitHub アプリ：claude-walk-mobile-v1.svg
-  tools/banner/walker.mjs で作り直せます（見た目を変えたらファイル名の v を上げる）
+<!-- ============================== Profile ==============================
+  歩く Claude・Hello, World!・紹介文・Stats・Top Languages・Activity を 1 枚にまとめた画像
+  画面幅 768px 以上（PC）：profile.svg ／ それ以外（スマホ・GitHub アプリ）：profile-mobile.svg（縦 1 列・軽量版）
+  .github/workflows/profile-cards.yml が毎日作り直します（まとめ方は .github/scripts/compose.mjs）
 -->
 <p align="center">
   <picture>
-    <source media="(min-width: 768px)" srcset="https://github.com/raika10/raika10/raw/main/assets/claude-walk-v1.svg" />
-    <img src="./assets/claude-walk-mobile-v1.svg" width="804" alt="Claude walking" />
+    <source media="(min-width: 768px)" srcset="https://github.com/raika10/raika10/raw/main/assets/generated/profile.svg" />
+    <img src="./assets/generated/profile-mobile.svg" width="804" alt="Hello, World! Web・モバイルを中心に、幅広いアプリケーション開発に取り組んでいます。" />
   </picture>
-</p>
-
-<!-- ============================== Header ==============================
-  画面幅 768px 以上（PC）：カットインなどの演出つきの SVG
-  それ以外（スマホ・GitHub アプリ）：軽く再生できるアニメーション WebP
-  どちらも tools/banner で作り直せます
--->
-<p align="center">
-  <picture>
-    <source media="(min-width: 768px)" srcset="https://github.com/raika10/raika10/raw/main/assets/banner-v8.svg" />
-    <img src="./assets/banner-mobile-v4.webp" width="804" alt="Hello, World!" />
-  </picture>
-</p>
-
-<p align="center">
-  Web・モバイルを中心に、幅広いアプリケーション開発に取り組んでいます。
-  <br />
-  <sub><em>Crafting innovative applications across web and mobile.</em></sub>
-</p>
-
-<br />
-
-<!-- ========================= GitHub Statistics ========================= -->
-<!-- 下の 3 枚は .github/workflows/profile-cards.yml が毎日自動生成します -->
-
-<p align="center">
-  <img src="./assets/generated/stats.svg" width="400" alt="GitHub Stats" />
-  <img src="./assets/generated/languages.svg" width="400" alt="Top Languages" />
-</p>
-
-<p align="center">
-  <img src="./assets/generated/activity.svg" width="804" alt="GitHub Activity Graph" />
 </p>
 
 <!-- ============================== Connect ==============================

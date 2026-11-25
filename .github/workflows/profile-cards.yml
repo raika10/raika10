@@ -9,6 +9,7 @@ on:
     paths:
       - ".github/workflows/profile-cards.yml"
       - ".github/scripts/**"
+      - "assets/banner-v8.svg" # まとめ画像に入る Hello, World!
 
 permissions:
   contents: write

@@ -6,6 +6,9 @@
  *   assets/generated/stats.svg      … GitHub Stats
  *   assets/generated/languages.svg  … Top Languages
  *   assets/generated/activity.svg   … Activity Graph（直近 30 日）
+ *   assets/generated/profile.svg         … 上の 3 枚に 歩く Claude・Hello, World!・紹介文 を加えて 1 枚にまとめた画像（PC 用）
+ *   assets/generated/profile-mobile.svg  … 同じく縦 1 列にまとめたスマホ用（README はこの 2 枚を表示）
+ *   まとめ方は compose.mjs を参照
  *
  * 環境変数
  *   GITHUB_TOKEN   必須。Actions では secrets.GITHUB_TOKEN をそのまま渡せます
@@ -15,6 +18,7 @@
  */
 import { writeFile, mkdir } from "node:fs/promises";
 import path from "node:path";
+import { composeProfile } from "./compose.mjs";
 
 const OUT_DIR = process.env.OUT_DIR || "assets/generated";
 const USER = process.env.GH_USER;
@@ -389,8 +393,9 @@ function niceMax(v) {
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-function activityCard({ days }) {
-  const W = 804, H = 260;
+// W：PC は 804、スマホ用のまとめ画像では 420（幅が狭いので右上の表示を短くする）
+function activityCard({ days }, W = 804) {
+  const H = 260;
   const X0 = 56, X1 = W - 28, Y0 = 70, Y1 = 206;
   const RD = 0.4, RT = 2.4; // 描画開始までの待ち / 描画時間
   const vals = days.map((d) => d.contributionCount);
@@ -463,7 +468,7 @@ ${xl}
   <circle cx="${r1(lx)}" cy="${r1(ly)}" r="3.5" fill="${C.cyan}"/>
 </g>`;
   return card({
-    w: W, h: H, title: "CONTRIBUTION ACTIVITY", meta: `LAST 30 DAYS · ${sum} CONTRIBUTIONS`, label: "GitHub Activity Graph", body,
+    w: W, h: H, title: "CONTRIBUTION ACTIVITY", meta: W < 600 ? `30 DAYS · ${sum}` : `LAST 30 DAYS · ${sum} CONTRIBUTIONS`, label: "GitHub Activity Graph", body,
     defs: `<linearGradient id="k-lineG" gradientUnits="userSpaceOnUse" x1="${X0}" y1="0" x2="${X1}" y2="0">
     <stop offset="0" stop-color="${C.emerald}"/><stop offset=".6" stop-color="${C.cyan}"/><stop offset="1" stop-color="${C.mint}"/>
   </linearGradient>
@@ -484,8 +489,10 @@ const data = await fetchData();
 await mkdir(OUT_DIR, { recursive: true });
 const out = (f) => path.join(OUT_DIR, f);
 
-await writeFile(out("stats.svg"), statsCard(data));
-await writeFile(out("languages.svg"), languagesCard(data));
-await writeFile(out("activity.svg"), activityCard(data));
+const stats = statsCard(data), languages = languagesCard(data), activity = activityCard(data);
+await writeFile(out("stats.svg"), stats);
+await writeFile(out("languages.svg"), languages);
+await writeFile(out("activity.svg"), activity);
+await composeProfile({ outDir: OUT_DIR, stats, languages, activity, activityMobile: activityCard(data, 420) });
 
 console.log(`Generated cards for @${data.login} → ${OUT_DIR}`);

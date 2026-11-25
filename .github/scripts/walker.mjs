@@ -1,27 +1,16 @@
-#!/usr/bin/env node
 /**
  * 歩く Claude のバー
  * ------------------
- * 紺のガラス風のバーの中を、オレンジのドット絵の Claude が左から右へ歩く SVG を作ります（CSS アニメーションのみ）。
- *   node walker.mjs
- *     → ../../assets/claude-walk-v1.svg         PC 用（804×44）
- *     → ../../assets/claude-walk-mobile-v1.svg  スマホ用（420×52。小さい画面でもキャラクターが見えるよう高めにする）
+ * 紺のガラス風のバーの中を、オレンジのドット絵の Claude が左から右へ歩く SVG（CSS アニメーションのみ）。
+ * compose.mjs がプロフィール画像の一番上に置きます。
  *
- * 見た目を変えたら VERSION を上げ、README の画像パスも書き換えてください
- * （GitHub アプリは同じ URL の古い画像を使い続けるため）。
+ * 11×7 マスのドット絵。足は 2 コマで交互に動き、体が少し弾み、ときどきまばたきする。
+ * 右端から出たら少し休み、左端から入り直す。
+ * 最初のコマ（アニメーションが止まる環境）でもバーの中に立っている位置から始める。
  */
-import { writeFile } from "node:fs/promises";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
-
-const VERSION = 1;
-const OUT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../assets");
 const CLAUDE = "#D97757", EYE = "#1A1310";
 
-/* 11×7 マスのドット絵。足は 2 コマで交互に動き、体が少し弾み、ときどきまばたきする。
-   右端から出たら少し休み、左端から入り直す。
-   最初のコマ（アニメーションが止まる環境）でもバーの中に立っている位置から始める */
-function bar({ W, H, r, u, speed, pause = 2.2 }) {
+export function walkerBar({ W, H, r = 14, u, speed, pause = 2.2 }) {
   const w = 11 * u, h = 7 * u;
   const px = (x, y, ww, hh) => `<rect x="${x * u}" y="${y * u}" width="${ww * u}" height="${hh * u}"/>`;
   const body = px(2, 0, 7, 5) + px(0, 2, 2, 1) + px(9, 2, 2, 1); // 胴体と両腕
@@ -73,13 +62,4 @@ function bar({ W, H, r, u, speed, pause = 2.2 }) {
 <rect x=".5" y=".5" width="${W - 1}" height="${H - 1}" rx="${r - 0.5}" fill="none" stroke="#94A3B8" stroke-opacity=".16"/>
 </svg>
 `;
-}
-
-const files = [
-  [`claude-walk-v${VERSION}.svg`, bar({ W: 804, H: 44, r: 12, u: 2.4, speed: 64 })],
-  [`claude-walk-mobile-v${VERSION}.svg`, bar({ W: 420, H: 52, r: 14, u: 2.6, speed: 40 })],
-];
-for (const [name, svg] of files) {
-  await writeFile(path.join(OUT, name), svg);
-  console.log(`→ assets/${name}`);
 }
