@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="62" viewBox="0 0 420 62" role="img" aria-label="raika10 のメニューバー：最近：EVC・11/25 14:22 更新">
+<defs>
+  <linearGradient id="mb-bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#132036"/><stop offset="1" stop-color="#0D1626"/></linearGradient>
+  <radialGradient id="mb-a" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(50.4 31) scale(134.4 124)"><stop offset="0" stop-color="#10B981" stop-opacity=".22"/><stop offset="1" stop-color="#10B981" stop-opacity="0"/></radialGradient>
+  <radialGradient id="mb-b" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(361.2 31) scale(126 124)"><stop offset="0" stop-color="#38BDF8" stop-opacity=".18"/><stop offset="1" stop-color="#38BDF8" stop-opacity="0"/></radialGradient>
+  <linearGradient id="mb-logo" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#10B981"/><stop offset="1" stop-color="#38BDF8"/></linearGradient>
+  <clipPath id="mb-clip"><rect width="420" height="62" rx="14"/></clipPath>
+</defs>
+<style>
+  .sans{font-family:'Inter','Segoe UI',-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic','Helvetica Neue',Arial,sans-serif}
+  .ping{transform-box:fill-box;transform-origin:center;animation:ping 2.4s ease-out infinite}
+  @keyframes ping{0%{transform:scale(1);opacity:.7}100%{transform:scale(2.6);opacity:0}}
+  .spark text{opacity:0;animation:spark 1.2s steps(1) infinite}
+  @keyframes spark{0%{opacity:1}16.6%,100%{opacity:0}}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important}.spark text:first-child{opacity:1}}
+</style>
+<g clip-path="url(#mb-clip)">
+  <rect width="420" height="62" fill="url(#mb-bg)"/>
+  <rect width="420" height="62" fill="url(#mb-a)"/>
+  <rect width="420" height="62" fill="url(#mb-b)"/>
+  <rect width="420" height="1" fill="#FFFFFF" fill-opacity=".07"/>
+  <style>
+  .cl-walk{animation:cl-walk 15.11s linear infinite}
+  @keyframes cl-walk{0%{transform:translateX(0)}74.45%{transform:translateX(405.0px);animation-timing-function:steps(1,end)}90.99%{transform:translateX(-49.0px);animation-timing-function:linear}100%{transform:translateX(0)}}
+  .cl-a{animation:cl-a 0.32s steps(1,end) infinite} @keyframes cl-a{0%{opacity:1}50%{opacity:0}}
+  .cl-b{opacity:0;animation:cl-b 0.32s steps(1,end) infinite} @keyframes cl-b{0%{opacity:0}50%{opacity:1}}
+  .cl-bob{animation:cl-bob 0.32s steps(1,end) infinite} @keyframes cl-bob{0%{transform:translateY(0)}50%{transform:translateY(-1.00px)}}
+  .cl-eye{transform-box:fill-box;transform-origin:center;animation:cl-blink 4.6s infinite}
+  @keyframes cl-blink{0%,90%,96%,100%{transform:scaleY(1)}93%{transform:scaleY(.15)}}
+</style>
+<g transform="translate(21 47.00)" fill="#D97757" shape-rendering="crispEdges">
+  <g class="cl-walk">
+    <g class="cl-bob"><rect x="4" y="0" width="14" height="10"/><rect x="0" y="4" width="4" height="2"/><rect x="18" y="4" width="4" height="2"/><g class="cl-eye" fill="#1A1310"><rect x="8" y="2" width="2" height="4"/><rect x="14" y="2" width="2" height="4"/></g></g>
+    <g class="cl-a"><rect x="4" y="8" width="2" height="6"/><rect x="8" y="8" width="2" height="4"/><rect x="12" y="8" width="2" height="6"/><rect x="16" y="8" width="2" height="4"/></g>
+    <g class="cl-b"><rect x="4" y="8" width="2" height="4"/><rect x="8" y="8" width="2" height="6"/><rect x="12" y="8" width="2" height="4"/><rect x="16" y="8" width="2" height="6"/></g>
+  </g>
+</g>
+</g>
+<rect x=".5" y=".5" width="419" height="61" rx="13.5" fill="none" stroke="#94A3B8" stroke-opacity=".16"/>
+<g class="sans" font-size="15">
+  <rect x="16" y="13" width="26" height="26" rx="7.280000000000001" fill="url(#mb-logo)"/>
+<text class="sans" x="29" y="31.72" text-anchor="middle" font-size="15.079999999999998" font-weight="900" fill="#04120D">R</text>
+  <text x="52.0" y="31" text-anchor="start" textLength="52.3" lengthAdjust="spacing" font-weight="700" fill="#F1F5F9">raika10</text>
+  <circle class="ping" cx="181.59999999999997" cy="26" r="3.8" fill="#10B981"/><circle cx="181.59999999999997" cy="26" r="3.8" fill="#10B981"/>
+  <text x="266.4" y="31" text-anchor="end" textLength="73.8" lengthAdjust="spacing" fill="#E2E8F0">最近：EVC</text>
+  <text x="314.4" y="31" text-anchor="end" textLength="30.0" lengthAdjust="spacing" fill="#94A3B8">更新</text>
+  <text x="358.2" y="31" text-anchor="end" textLength="37.8" lengthAdjust="spacing" fill="#F1F5F9">11/25</text>
+  <text x="402.0" y="31" text-anchor="end" textLength="37.8" lengthAdjust="spacing" fill="#F1F5F9">14:22</text>
+</g>
+</svg>

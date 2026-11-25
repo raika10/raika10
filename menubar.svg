@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="804" height="50" viewBox="0 0 804 50" role="img" aria-label="raika10 のメニューバー：最近：EVC・11/25(水) 14:22 更新">
+<defs>
+  <linearGradient id="mb-bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#132036"/><stop offset="1" stop-color="#0D1626"/></linearGradient>
+  <radialGradient id="mb-a" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(96.47999999999999 25) scale(257.28000000000003 100)"><stop offset="0" stop-color="#10B981" stop-opacity=".22"/><stop offset="1" stop-color="#10B981" stop-opacity="0"/></radialGradient>
+  <radialGradient id="mb-b" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(691.4399999999999 25) scale(241.2 100)"><stop offset="0" stop-color="#38BDF8" stop-opacity=".18"/><stop offset="1" stop-color="#38BDF8" stop-opacity="0"/></radialGradient>
+  <linearGradient id="mb-logo" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#10B981"/><stop offset="1" stop-color="#38BDF8"/></linearGradient>
+  <clipPath id="mb-clip"><rect width="804" height="50" rx="12"/></clipPath>
+</defs>
+<style>
+  .sans{font-family:'Inter','Segoe UI',-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic','Helvetica Neue',Arial,sans-serif}
+  .ping{transform-box:fill-box;transform-origin:center;animation:ping 2.4s ease-out infinite}
+  @keyframes ping{0%{transform:scale(1);opacity:.7}100%{transform:scale(2.6);opacity:0}}
+  .spark text{opacity:0;animation:spark 1.2s steps(1) infinite}
+  @keyframes spark{0%{opacity:1}16.6%,100%{opacity:0}}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important}.spark text:first-child{opacity:1}}
+</style>
+<g clip-path="url(#mb-clip)">
+  <rect width="804" height="50" fill="url(#mb-bg)"/>
+  <rect width="804" height="50" fill="url(#mb-a)"/>
+  <rect width="804" height="50" fill="url(#mb-b)"/>
+  <rect width="804" height="1" fill="#FFFFFF" fill-opacity=".07"/>
+  <style>
+  .cl-walk{animation:cl-walk 16.89s linear infinite}
+  @keyframes cl-walk{0%{transform:translateX(0)}78.60%{transform:translateX(770.0px);animation-timing-function:steps(1,end)}93.40%{transform:translateX(-64.7px);animation-timing-function:linear}100%{transform:translateX(0)}}
+  .cl-a{animation:cl-a 0.32s steps(1,end) infinite} @keyframes cl-a{0%{opacity:1}50%{opacity:0}}
+  .cl-b{opacity:0;animation:cl-b 0.32s steps(1,end) infinite} @keyframes cl-b{0%{opacity:0}50%{opacity:1}}
+  .cl-bob{animation:cl-bob 0.32s steps(1,end) infinite} @keyframes cl-bob{0%{transform:translateY(0)}50%{transform:translateY(-0.85px)}}
+  .cl-eye{transform-box:fill-box;transform-origin:center;animation:cl-blink 4.6s infinite}
+  @keyframes cl-blink{0%,90%,96%,100%{transform:scaleY(1)}93%{transform:scaleY(.15)}}
+</style>
+<g transform="translate(40 37.10)" fill="#D97757" shape-rendering="crispEdges">
+  <g class="cl-walk">
+    <g class="cl-bob"><rect x="3.4" y="0" width="11.9" height="8.5"/><rect x="0" y="3.4" width="3.4" height="1.7"/><rect x="15.299999999999999" y="3.4" width="3.4" height="1.7"/><g class="cl-eye" fill="#1A1310"><rect x="6.8" y="1.7" width="1.7" height="3.4"/><rect x="11.9" y="1.7" width="1.7" height="3.4"/></g></g>
+    <g class="cl-a"><rect x="3.4" y="6.8" width="1.7" height="5.1"/><rect x="6.8" y="6.8" width="1.7" height="3.4"/><rect x="10.2" y="6.8" width="1.7" height="5.1"/><rect x="13.6" y="6.8" width="1.7" height="3.4"/></g>
+    <g class="cl-b"><rect x="3.4" y="6.8" width="1.7" height="3.4"/><rect x="6.8" y="6.8" width="1.7" height="5.1"/><rect x="10.2" y="6.8" width="1.7" height="3.4"/><rect x="13.6" y="6.8" width="1.7" height="5.1"/></g>
+  </g>
+</g>
+</g>
+<rect x=".5" y=".5" width="803" height="49" rx="11.5" fill="none" stroke="#94A3B8" stroke-opacity=".16"/>
+<g class="sans" font-size="13">
+  <rect x="14" y="10" width="22" height="22" rx="6.16" fill="url(#mb-logo)"/>
+<text class="sans" x="25" y="25.84" text-anchor="middle" font-size="12.76" font-weight="900" fill="#04120D">R</text>
+  <text x="46.0" y="26" text-anchor="start" textLength="45.3" lengthAdjust="spacing" font-weight="700" fill="#F1F5F9">raika10</text>
+  <g fill="#CBD5E1" fill-opacity=".85"><text x="113.3" y="26" text-anchor="start" textLength="47.6" lengthAdjust="spacing" >Projects</text><text x="178.9" y="26" text-anchor="start" textLength="44.6" lengthAdjust="spacing" >Activity</text><text x="241.5" y="26" text-anchor="start" textLength="32.9" lengthAdjust="spacing" >About</text></g>
+  <circle class="ping" cx="446.21999999999997" cy="21.5" r="3.4" fill="#10B981"/><circle cx="446.21999999999997" cy="21.5" r="3.4" fill="#10B981"/>
+  <text x="520.2" y="26" text-anchor="end" textLength="64.0" lengthAdjust="spacing" fill="#E2E8F0">最近：EVC</text>
+  <g class="spark" fill="#F2A385" font-size="13"><text x="557.88" y="26" text-anchor="end" style="animation-delay:0.0s">✢</text><text x="557.88" y="26" text-anchor="end" style="animation-delay:0.2s">✶</text><text x="557.88" y="26" text-anchor="end" style="animation-delay:0.4s">✻</text><text x="557.88" y="26" text-anchor="end" style="animation-delay:0.6s">✽</text><text x="557.88" y="26" text-anchor="end" style="animation-delay:0.8s">✻</text><text x="557.88" y="26" text-anchor="end" style="animation-delay:1.0s">✶</text></g>
+  <text x="635.2" y="26" text-anchor="end" textLength="72.3" lengthAdjust="spacing" fill="#F2A385">Claude Code</text>
+  <text x="687.2" y="26" text-anchor="end" textLength="26.0" lengthAdjust="spacing" fill="#94A3B8">更新</text>
+  <text x="748.2" y="26" text-anchor="end" textLength="54.1" lengthAdjust="spacing" fill="#F1F5F9">11/25(水)</text>
+  <text x="788.0" y="26" text-anchor="end" textLength="32.8" lengthAdjust="spacing" fill="#F1F5F9">14:22</text>
+</g>
+</svg>
