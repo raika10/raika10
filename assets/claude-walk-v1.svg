@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="804" height="44" viewBox="0 0 804 44" role="img" aria-label="Claude が歩くバー">
+<defs>
+  <linearGradient id="wk-bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#132036"/><stop offset="1" stop-color="#0D1626"/></linearGradient>
+  <radialGradient id="wk-a" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(96.47999999999999 22) scale(257.28000000000003 88)"><stop offset="0" stop-color="#10B981" stop-opacity=".22"/><stop offset="1" stop-color="#10B981" stop-opacity="0"/></radialGradient>
+  <radialGradient id="wk-b" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(691.4399999999999 22) scale(241.2 88)"><stop offset="0" stop-color="#38BDF8" stop-opacity=".18"/><stop offset="1" stop-color="#38BDF8" stop-opacity="0"/></radialGradient>
+  <clipPath id="wk-clip"><rect width="804" height="44" rx="12"/></clipPath>
+</defs>
+<style>
+  .wk-walk{animation:wk-walk 15.36s linear infinite}
+  @keyframes wk-walk{0%{transform:translateX(0)}77.50%{transform:translateX(762.0px);animation-timing-function:steps(1,end)}91.82%{transform:translateX(-80.4px);animation-timing-function:linear}100%{transform:translateX(0)}}
+  .wk-a{animation:wk-a 0.32s steps(1,end) infinite} @keyframes wk-a{0%{opacity:1}50%{opacity:0}}
+  .wk-b{opacity:0;animation:wk-b 0.32s steps(1,end) infinite} @keyframes wk-b{0%{opacity:0}50%{opacity:1}}
+  .wk-bob{animation:wk-bob 0.32s steps(1,end) infinite} @keyframes wk-bob{0%{transform:translateY(0)}50%{transform:translateY(-1.20px)}}
+  .wk-eye{transform-box:fill-box;transform-origin:center;animation:wk-blink 4.6s infinite}
+  @keyframes wk-blink{0%,90%,96%,100%{transform:scaleY(1)}93%{transform:scaleY(.15)}}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+<g clip-path="url(#wk-clip)">
+  <rect width="804" height="44" fill="url(#wk-bg)"/>
+  <rect width="804" height="44" fill="url(#wk-a)"/>
+  <rect width="804" height="44" fill="url(#wk-b)"/>
+  <rect width="804" height="1" fill="#FFFFFF" fill-opacity=".07"/>
+  <g transform="translate(48 14.80)">
+    <g class="wk-walk">
+      <ellipse cx="13.2" cy="17.76" rx="10.08" ry="1.68" fill="#000000" fill-opacity=".35"/>
+      <g fill="#D97757" shape-rendering="crispEdges">
+        <g class="wk-bob"><rect x="4.8" y="0" width="16.8" height="12"/><rect x="0" y="4.8" width="4.8" height="2.4"/><rect x="21.599999999999998" y="4.8" width="4.8" height="2.4"/><g class="wk-eye" fill="#1A1310"><rect x="9.6" y="2.4" width="2.4" height="4.8"/><rect x="16.8" y="2.4" width="2.4" height="4.8"/></g></g>
+        <g class="wk-a"><rect x="4.8" y="9.6" width="2.4" height="7.199999999999999"/><rect x="9.6" y="9.6" width="2.4" height="4.8"/><rect x="14.399999999999999" y="9.6" width="2.4" height="7.199999999999999"/><rect x="19.2" y="9.6" width="2.4" height="4.8"/></g>
+        <g class="wk-b"><rect x="4.8" y="9.6" width="2.4" height="4.8"/><rect x="9.6" y="9.6" width="2.4" height="7.199999999999999"/><rect x="14.399999999999999" y="9.6" width="2.4" height="4.8"/><rect x="19.2" y="9.6" width="2.4" height="7.199999999999999"/></g>
+      </g>
+    </g>
+  </g>
+</g>
+<rect x=".5" y=".5" width="803" height="43" rx="11.5" fill="none" stroke="#94A3B8" stroke-opacity=".16"/>
+</svg>

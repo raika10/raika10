@@ -1,12 +1,12 @@
-<!-- ============================= Menu Bar =============================
-  Mac のメニューバー風ステータス（作業中のリポジトリ・日時）
-  .github/workflows/menubar.yml が 30 分ごとに作り直し、status ブランチに置きます
-  （GitHub の混雑で遅れることがあるので、時刻は「更新」日時として表示）
+<!-- ============================ Claude Walk ============================
+  紺のバーの中を Claude（ドット絵）が左から右へ歩きます
+  PC：claude-walk-v1.svg ／ スマホ・GitHub アプリ：claude-walk-mobile-v1.svg
+  tools/banner/walker.mjs で作り直せます（見た目を変えたらファイル名の v を上げる）
 -->
 <p align="center">
   <picture>
-    <source media="(min-width: 768px)" srcset="https://github.com/raika10/raika10/raw/status/menubar.svg" />
-    <img src="https://github.com/raika10/raika10/raw/status/menubar-mobile.svg" width="804" alt="raika10 menu bar" />
+    <source media="(min-width: 768px)" srcset="https://github.com/raika10/raika10/raw/main/assets/claude-walk-v1.svg" />
+    <img src="./assets/claude-walk-mobile-v1.svg" width="804" alt="Claude walking" />
   </picture>
 </p>
 
