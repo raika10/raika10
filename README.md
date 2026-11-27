@@ -5,8 +5,8 @@
 -->
 <p align="center">
   <picture>
-    <source media="(min-width: 768px)" srcset="https://github.com/raika10/raika10/raw/main/assets/generated/profile.svg?v=adfeff52" />
-    <img src="./assets/generated/profile-mobile.svg?v=1cc8795f" width="804" alt="Hello, World! Web・モバイルを中心に、幅広いアプリケーション開発に取り組んでいます。" />
+    <source media="(min-width: 768px)" srcset="https://github.com/raika10/raika10/raw/main/assets/generated/profile.svg?v=f0d0ac1c" />
+    <img src="./assets/generated/profile-mobile.svg?v=a8eaaf89" width="804" alt="Hello, World! Web・モバイルを中心に、幅広いアプリケーション開発に取り組んでいます。" />
   </picture>
 </p>
 
