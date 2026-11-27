@@ -1,7 +1,7 @@
 /**
  * プロフィール画像を 1 枚にまとめる
  * --------------------------------
- * 歩く Claude・Hello, World!・紹介文・Stats・Top Languages・Activity を、同じすき間・同じ角丸のタイルとして 1 枚の SVG に並べます。
+ * お散歩する Claude（白い野原）・Hello, World!・紹介文・Stats・Top Languages・Activity を、同じすき間・同じ角丸のタイルとして 1 枚の SVG に並べます。
  *   profile.svg         … PC 用（804 幅）。Stats と Top Languages は横並び
  *   profile-mobile.svg  … スマホ・GitHub アプリ用（420 幅）。縦 1 列。
  *                          Hello, World! の背景は水彩（重い）ではなくカードと同じ静かな背景にして軽くする
@@ -127,7 +127,7 @@ export async function composeProfile({ outDir, stats, languages, activity, activ
     const out = [];
     let y = 0;
     const row = (svg, p, x, w) => { const r = place(svg, p, x, y, w); out.push(r.svg); return r.h; };
-    y += row(walkerBar({ W, H: 44, u: 2.4, speed: 64 }), "wk", 0, W) + G;
+    y += row(walkerBar({ W, H: 72, u: 2.4, speed: 64 }), "wk", 0, W) + G;
     y += row(banner, "bn", 0, W) + G;
     y += row(introTile(W, 84, [
       { t: JA, y: 40, size: 15, fill: "#E2E8F0" },
@@ -144,7 +144,7 @@ export async function composeProfile({ outDir, stats, languages, activity, activ
     const out = [];
     let y = 0;
     const row = (svg, p, w = W) => { const r = place(svg, p, 0, y, w); out.push(r.svg); y += r.h + G; };
-    row(walkerBar({ W, H: 52, u: 2.6, speed: 40 }), "wk");
+    row(walkerBar({ W, H: 64, u: 2.6, speed: 40 }), "wk");
     row(calmBanner(banner), "bn");
     row(introTile(W, 104, [
       { t: "Web・モバイルを中心に、", y: 37, size: 14, fill: "#E2E8F0" },
