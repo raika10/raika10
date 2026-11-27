@@ -9,6 +9,8 @@
  *   assets/generated/profile.svg         … 上の 3 枚に 歩く Claude・Hello, World!・紹介文 を加えて 1 枚にまとめた画像（PC 用）
  *   assets/generated/profile-mobile.svg  … 同じく縦 1 列にまとめたスマホ用（README はこの 2 枚を表示）
  *   まとめ方は compose.mjs を参照
+ *   README の画像 URL の ?v=… も、画像の中身に合わせて書き換えます
+ *   （GitHub アプリやブラウザは同じ URL の古い画像を使い続けるため、中身が変わったら URL も変える）
  *
  * 環境変数
  *   GITHUB_TOKEN   必須。Actions では secrets.GITHUB_TOKEN をそのまま渡せます
@@ -16,7 +18,8 @@
  *   EXCLUDE_REPOS  任意。言語集計から除外するリポジトリ名（カンマ区切り）
  *   EXCLUDE_LANGS  任意。言語集計から除外する言語名（カンマ区切り）
  */
-import { writeFile, mkdir } from "node:fs/promises";
+import { writeFile, mkdir, readFile } from "node:fs/promises";
+import { createHash } from "node:crypto";
 import path from "node:path";
 import { composeProfile } from "./compose.mjs";
 
@@ -494,5 +497,15 @@ await writeFile(out("stats.svg"), stats);
 await writeFile(out("languages.svg"), languages);
 await writeFile(out("activity.svg"), activity);
 await composeProfile({ outDir: OUT_DIR, stats, languages, activity, activityMobile: activityCard(data, 420) });
+
+// README の画像 URL に中身のハッシュを付ける（既定の出力先に書いたときだけ）
+if (path.resolve(OUT_DIR) === path.resolve("assets/generated")) {
+  let md = await readFile("README.md", "utf8");
+  for (const f of ["profile.svg", "profile-mobile.svg"]) {
+    const v = createHash("sha1").update(await readFile(out(f))).digest("hex").slice(0, 8);
+    md = md.replace(new RegExp(`(generated/${f.replace(".", "\\.")})(\\?v=[0-9a-f]+)?`, "g"), `$1?v=${v}`);
+  }
+  await writeFile("README.md", md);
+}
 
 console.log(`Generated cards for @${data.login} → ${OUT_DIR}`);
